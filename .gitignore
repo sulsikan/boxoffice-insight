@@ -3,7 +3,8 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 db.sqlite3
-korean_boxoffice/migrations/0*
+**/migrations/0*
+venv
 
 # User-specific stuff
 .idea/**/workspace.xml

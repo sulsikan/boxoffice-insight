@@ -65,32 +65,34 @@ key_funcs = {
     'screenings_num': str_to_int,
 }
 
-with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
-    driver.get('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
-    driver.implicitly_wait(20)
+if __name__ == '__main__':
 
-    ranking_dates = []
-    for h4 in driver.find_elements(By.TAG_NAME, 'h4'):
-        if h4.text.strip() == '':
-            continue
-        ranking_dates.append(to_ranking_date(h4.text.strip()))
+    with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
+        driver.get('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
+        driver.implicitly_wait(20)
 
-    print(ranking_dates)
+        ranking_dates = []
+        for h4 in driver.find_elements(By.TAG_NAME, 'h4'):
+            if h4.text.strip() == '':
+                continue
+            ranking_dates.append(to_ranking_date(h4.text.strip()))
 
-    for i, tbody in enumerate(driver.find_elements(By.TAG_NAME, 'tbody')):
-        if tbody.text.strip() == '':
-            break
+        print(ranking_dates)
 
-        ranking_date = ranking_dates[i]
-        for row in tbody.find_elements(By.TAG_NAME, 'tr'):
-            row_data = {'ranking_date': ranking_date}
-            for k, data in zip(key_funcs, row.find_elements(By.TAG_NAME, 'td')):
-                func = key_funcs.get(k, None)
-                row_data[k] = func(data.text.strip())
+        for i, tbody in enumerate(driver.find_elements(By.TAG_NAME, 'tbody')):
+            if tbody.text.strip() == '':
+                break
 
-            print(row_data)
-            row_data[
-                'ranking_date_rank'] = f'{ranking_date.year}-{ranking_date.month:02d}-{ranking_date.day:02d}@{row_data['rank']:02d}'
+            ranking_date = ranking_dates[i]
+            for row in tbody.find_elements(By.TAG_NAME, 'tr'):
+                row_data = {'ranking_date': ranking_date}
+                for k, data in zip(key_funcs, row.find_elements(By.TAG_NAME, 'td')):
+                    func = key_funcs.get(k, None)
+                    row_data[k] = func(data.text.strip())
 
-            boxoffice = DailyBoxoffice(**row_data)
-            boxoffice.save()
+                print(row_data)
+                row_data[
+                    'ranking_date_rank'] = f'{ranking_date.year}-{ranking_date.month:02d}-{ranking_date.day:02d}@{row_data['rank']:02d}'
+
+                boxoffice = DailyBoxoffice(**row_data)
+                boxoffice.save()
