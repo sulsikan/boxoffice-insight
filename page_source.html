@@ -1,0 +1,2547 @@
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>KOFIC 영화관 입장권 통합전산망 :: 해외박스오피스</title>
+<!-- 공통 js/css -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--[if IE]>
+<script src="/kobis/web/comm/commjs/html5shiv.js"></script>
+<![endif]-->
+
+
+
+<!-- 기본 css -->
+<link rel="stylesheet" type="text/css" href="/kobis/web/comm/commcss/default.css">
+<link rel="stylesheet" type="text/css" href="/kobis/web/comm/commcss/jquery-ui-1.12.1.min.css">
+<link rel="stylesheet" type="text/css" href="/kobis/web/comm/commcss/common.css">
+
+
+<script src="https://cr.acecounter.com/Web/cookiesync.js?gc=AB2A31560820885&amp;rd=1744986725990"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script src="https://cr.acecounter.com/Web/AceCounter_AW.js?gc=AB2A31560820885&amp;py=0&amp;gd=gtt6&amp;gp=8080&amp;up=NaPm_Ncisy&amp;rd=1744986725761"></script><script type="text/javascript" src="/kobis/web/comm/commjs/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/jquery.dotdotdot.min.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/jquery.bxslider.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/comm_script.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/jquery-ui-1.13.2.min.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/jquery.ui.datepicker-ko.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/kobis.js"></script>
+
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/kobis/web/comm/commcss/cont.css">
+<link rel="stylesheet" type="text/css" href="/kobis/web/comm/commcss/kobis.css">
+<script type="text/javascript" src="/kobis/web/comm/commjs/jcarousellite_1.0.1.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/IGuide.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/jquery.cookie.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/dialogStyle.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/layerpopup.js"></script> 
+<script type="text/javascript" src="/kobis/web/comm/commjs/innershiv.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/commjs/detailLayer.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/online/js/chart.min.js"></script>
+<script type="text/javascript" src="/kobis/web/comm/online/js/jquery.peity.js"></script>  
+
+<style type="text/css">
+.mvie1_1 .box_gray + .tar {margin-top:24px;}
+.mvie1_1 .area_line {padding:25px 0; margin:7px 0 0px; border-top:1px solid #afafaf; border-bottom:1px solid #afafaf; overflow:hidden;}
+.mvie1_1 .area_line dl {float:left; padding-left:10px; margin-top:9px; overflow:hidden;}
+.mvie1_1 .area_line dt {float:left; width:60px; line-height:29px;}
+.mvie1_1 .area_line dd {width:200px; overflow:hidden;}
+.mvie1_1 .area_line dd .slt_comm {float:left; margin-right:10px;}
+.mvie1_1 .area_line .ins {position:relative; overflow:hidden;}
+.mvie1_1 .area_line .item {float:left; width:40%; margin:5px 0}
+.mvie1_1 .area_line .dot01 {float:left; width:100px; margin-left:10px; line-height:29px; font-weight:500}
+
+.rentrak {position:relative; padding-top:20px; text-align:right; clear:both}
+.box_rentrak {display:none; position:absolute; bottom:-30px; right:-33px; width:342px; height:143px; padding:15px 22px 0 16px; font-size:13px; line-height:20px; background:url(/kobis/web/comm/images/main/box_rentrak.png) 50% 50% no-repeat; text-align:left}
+</style>
+</head>
+
+<body>
+<div id="wrap" class="mvie1_1">
+<!-- 로딩중 -->
+<!-- <div id="wrap_layer">
+	<div class="bg"></div>
+	<p style="position:absolute;top:40%;left:40%;z-index: 10000;"><img src="/kobis/web/comm/images/comm/progressbar.gif" alt="현재 페이지를 로딩중입니다."></p>
+</div> -->
+<!-- 로딩중 -->
+	
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+	function mainTopMenuTopView(divName) {
+		var frm = document.getElementById(divName);
+		if(frm.style.display != "block") frm.style.display = "block";
+		else frm.style.display = "none";
+	}
+	
+	function fn_changeSearch() {
+		SetCookie("sel_s_type", $("#sel_s_type").val());
+		var pForm = document.searchMainTopMovie;
+		
+		if($("#sel_s_type").val() == "M") {
+			pForm.action="/kobis/business/mast/mvie/searchMovieList.do";
+			$("#inp_solrSearch").attr("name", "sMovName");
+		} else {
+			pForm.action="/kobis/business/comm/search/search.do";
+			$("#inp_solrSearch").attr("name", "queryString");
+		}
+	}
+	
+	function fn_mainTopMovieSearch(){
+		var pForm = document.searchMainTopMovie;
+		pForm.submit();
+	}
+	
+	$(document).ready(function() { 
+	    if(GetCookie("sel_s_type") == "T") {
+	    	$("#sel_s_type").val("T");
+	    	
+	    	var pForm = document.searchMainTopMovie;
+	    	pForm.action="/kobis/business/comm/search/search.do";
+	    	
+	    	$("#inp_solrSearch").attr("name", "queryString"); 
+	    }
+	    $("ul.list_nav > li > a").click(function(){
+	    
+	    		
+	    	if($(this).parent().find(".bg_sub ul.nav_sub > li:eq(0)  li.depth3:eq(0)").length >0){
+	    		$(this).parent().find(".bg_sub ul.nav_sub > li:eq(0)  li.depth3:eq(0) a").click();
+	    		goDirectPage($(this).parent().find(".bg_sub ul.nav_sub > li:eq(0)  li.depth3:eq(0) a").attr("href"));
+	    	}else{
+	    		$(this).parent().find(".bg_sub ul.nav_sub > li:eq(0) a").click();
+	    		goDirectPage($(this).parent().find(".bg_sub ul.nav_sub > li:eq(0) a").attr("href"));
+	    	}
+	    	
+	    	
+	    	if($(this).parent().hasClass("nav5")){
+	    		/* $(this).attr("href","/kobis/business/stat/online/onlinefindDailyBoxOfficeList.do"); */
+	    		/* location.href="/kobis/business/stat/online/onlineMain.do"; */
+	    		location.href="/kobis/business/stat/online/onlineintro.do";
+	    		
+	    	}
+	    });
+	}); 
+	function goDirectPage(page){
+		location.href=page;
+	}
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="/kobis/web/comm/commcss/autoLogout.css">
+
+<!-- 20221025 30분 자리비움 시 자동 로그아웃 KOFIC과 같은거로 -->
+<script language="javascript" type="text/javascript">
+//자동 로그아웃용 20221025
+function fn_ajaxJsonSua2(url, parameters, options) {
+	if(url == "" || url == null) {
+		alert("개발자 오류 : URL이 없습니다.");
+		return;
+	}
+
+	var cache = false;
+	var async = true;
+	var type  = "get";
+	var params = {};
+	var loading = "Y";
+
+	if(parameters) {
+		params = parameters;
+
+		$.each(params, function(key, value) {
+			params[key] = encodeURIComponent(value);
+		});
+	}
+
+	if(options) {
+		if(options["loading"]) {
+			loading = options["loading"];
+		}
+
+		if(options["cache"]) {
+			cache = options["cache"];
+		}
+
+		if(options["async"]) {
+			async = options["async"];
+		}
+
+		if(options["type"]) {
+			type = options["type"];
+		}
+	}
+
+	$.ajax({
+		type        : type,
+		url         : url,
+		dataType    : "json",
+		data        : params,
+		contentType : "application/json+sua",
+		cache       : cache,
+		async       : async,
+		beforeSend  : function(xhr){
+			if(loading == "Y") {
+				fn_startLoading();
+			}
+
+			if(params["fn_beforeSend"] && window[params["fn_beforeSend"]]) {
+				window[params["fn_beforeSend"]](data, params);
+			}
+		},
+		success     : function(data){
+			if(loading == "Y") {
+				fn_stopLoading();
+			}
+
+			if(params["fn_success"] && window[params["fn_success"]]) {
+				window[params["fn_success"]](data, params);
+			}
+	 	},
+	 	error       : function(data){
+	 		if(loading == "Y") {
+	 			fn_stopLoading();
+	 		}
+
+	 		try {
+	 			var errorMsg = JSON.parse(data.responseText);
+
+	 			if(errorMsg != "") {
+		 			alert(errorMsg.errorList[0].value);
+		 		}
+	 		} catch(e) {}
+
+			if(params["fn_error"] && window[params["fn_error"]]) {
+				window[params["fn_error"]](data, params);
+			}
+	 	},
+	 	complete    : function() {
+
+	 	}
+	});
+}
+
+var SystemUtils = {
+	    getMaxZIndex: function (a) {
+	        if (a == null) {
+	            a = $("div, span");
+	        }
+	        return Math.max.apply(null, $.map(a, function (e, n) {
+	            return parseInt($(e).css("z-index")) || 1;
+	        }));
+	    },
+	    getDocumentHeight: function () {
+	        return Math.max(Math.max(document.body.scrollHeight, document.documentElement.scrollHeight), Math.max(document.body.offsetHeight, document.documentElement.offsetHeight), Math.max(document.body.clientHeight, document.documentElement.clientHeight));
+	    }
+	};
+
+
+</script>
+
+
+<!-- 운영 적용시 if문 삭제 -->
+
+
+<div id="header" class="minwidth">
+    	<div class="hd_top">
+            <h1><a href="/kobis/business/main/main.do" class="block"><img src="/kobis/web/comm/images/comm/logo_comm.png" alt="KOBIS 영화관 입장권 통합 전산망"></a></h1>
+            <div class="hd_sch">
+            	<form action="/kobis/business/mast/mvie/searchMovieList.do" id="searchMainTopMovie" name="searchMainTopMovie" method="post">
+            	<input type="hidden" name="CSRFToken" value="UI5cNQ5CIuUDgLXyVDvOyAu5lZnMElwifn2wiYkNgLo" autocomplete="off">            	
+                <fieldset>
+                    <legend class="blind">검색</legend>
+                    <div class="hd_slt">
+                        <select class="slt" id="sel_s_type" onchange="fn_changeSearch();">
+                            <option value="M">영화정보</option>
+                            <option value="T">통합검색</option>
+                        </select>
+                    </div>
+                    <span class="hd_tf">                        
+                        <input type="text" class="tf" id="inp_solrSearch" name="sMovName" placeholder="검색어를 입력하세요." value="" autocomplete="off">
+                        <input type="hidden" name="sMovLang" value="ko" autocomplete="off">
+                    </span>
+                    <button type="button" class="btn_sch" onclick="fn_mainTopMovieSearch();return false;"><span class="ico_comm hidetxt">검색</span></button>                 
+                </fieldset>
+                </form>
+            </div>
+            <span style="bottom: 20px; float: right; display: block; position: relative;">
+               	<a href="/kobis/business/comm/bord/listMyTip.do?bizLogicType=3"><img style="margin-right: 4px;" alt="" src="/kobis/web/comm/images/main/head_ico1.png"></a>
+               	<!-- <a href="/kobis/business/mast/peop/searchPeopleList.do"><img alt="" src="/kobis/web/comm/images/main/head_ico2.png"></a> -->
+            </span>
+            <div class="gnb_top">
+                <ul class="fl">
+                	
+	                		<li><a href="/kobis/business/comm/user/openRegiUser.do">회원가입</a></li>
+							<li><a href="/kobis/business/comm/user/openLogin.do">로그인</a></li>
+	                	
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 사이트 메뉴 -->		
+		<div id="nav" class="minwidth">
+			<h2 class="blind">사이트 메뉴</h2>
+			<ul class="list_nav minwidth" style="min-width: 1260px">
+			 	
+			 	
+			 		<li class="depth1 nav1 headerWidth">
+			 			<a href="javascript:;" class="tit_nav">
+			 				영화정보검색
+			 			</a>
+			 			
+			 			<div class="wrap_sub">
+			 				<div class="bg_sub">
+			 					
+					 						<div class="visu_nav visu_mvie">
+				                                <strong class="depth2">영화</strong>
+				                                <span class="depth3">영화정보</span>
+				                            </div>
+					 					
+			 				
+			 				
+			 					<ul class="nav_sub">
+			 						
+			 						
+			 								<li class="depth2">
+			 									<a href="/kobis/business/mast/mvie/searchMovieList.do" class="tit_sub">영화</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/mvie/searchMovieList.do" class="block">영화정보</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/mvie/findOpenScheduleList.do" class="block">개봉스케줄</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/mvie/searchPrdtList.do" class="block">한국영화 제작상황판</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/mvie/findDiverMovList.do" class="block">독립·예술영화</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/mast/peop/searchPeopleList.do" class="tit_sub">영화인</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/mast/comp/searchCompanyList.do" class="tit_sub">영화사</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/mast/thea/findTheaterInfoList.do" class="tit_sub">영화상영관</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findTheaterInfoList.do" class="block">영화상영관정보</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findAreaTheaterStat.do" class="block">지역별 영화상영관현황</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findShowHistorySc.do" class="block">상영내역</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findTheaterSchedule.do" class="block">상영스케줄</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findScreenQuota.do" class="block">스크린쿼터내역</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findArtScreenStat.do" class="block">전용상영관 현황</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findArtShowHistory.do" class="block">전용상영관 상영내역</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/mast/fest/searchUserFestInfoList.do" class="tit_sub">영화제</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/mast/mvie/searchUserMovCdList.do" class="tit_sub">코드검색 및 등록</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/mvie/searchUserMovCdList.do" class="block">영화코드</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/send/findSenderCodeList.do" class="block">전송사업자코드</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/mast/thea/findTheaterCodeList.do" class="block">영화상영관코드</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 					</ul>
+			 				</div>
+			 			</div>
+			 		</li>
+			 	
+			 		<li class="depth1 nav2 headerWidth">
+			 			<a href="javascript:;" class="tit_nav">
+			 				박스오피스
+			 			</a>
+			 			
+			 			<div class="wrap_sub">
+			 				<div class="bg_sub">
+			 					
+					 						<div class="visu_nav visu_boxs">
+				                                <strong class="depth2">박스오피스</strong>
+				                                <span class="depth3">일별</span>
+				                            </div>
+					 					
+			 				
+			 				
+			 					<ul class="nav_sub">
+			 						
+			 						
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findDailyBoxOfficeList.do" class="tit_sub">박스오피스</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findDailyBoxOfficeList.do" class="block">일별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findWeeklyBoxOfficeList.do" class="block">주간/주말</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findMonthlyBoxOfficeList.do" class="block">월별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findYearlyBoxOfficeList.do" class="block">연도별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findFormerBoxOfficeList.do" class="block">역대</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findPeriodBoxOfficeList.do" class="block">기간별</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findWeekendForeignBoxOfficeList.do" class="tit_sub">해외 박스오피스</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findWeekendForeignBoxOfficeList.do" class="block">주말</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findRealTicketList.do" class="tit_sub">예매율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findRealTicketList.do" class="block">실시간</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findDailySeatTicketList.do" class="tit_sub">좌석점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findDailySeatTicketList.do" class="block">일별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findWeeklySeatTicketList.do" class="block">주간/주말</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findPeriodSeatTicketList.do" class="block">기간별</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findDailyShowTicketList.do" class="tit_sub">상영점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findDailyShowTicketList.do" class="block">일별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findWeeklyShowTicketList.do" class="block">주간/주말</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findPeriodShowTicketList.do" class="block">기간별</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findDailyScreenTicketList.do" class="tit_sub">스크린점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findDailyScreenTicketList.do" class="block">일별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findWeeklyScreenTicketList.do" class="block">주간/주말</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findPeriodScreenTicketList.do" class="block">기간별</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/unfair/findDailyShowFrequency.do" class="tit_sub">공정신호등</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/unfair/findDailyShowFrequency.do" class="block">공정신호등(상영회차별 점유상황)</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/boxs/findDailyMultichainList.do" class="tit_sub">체인영화관별 상영현황</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/boxs/findDailyMultichainList.do" class="block">멀티체인별 상영현황</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 					</ul>
+			 				</div>
+			 			</div>
+			 		</li>
+			 	
+			 		<li class="depth1 nav3 headerWidth">
+			 			<a href="javascript:;" class="tit_nav">
+			 				테마통계
+			 			</a>
+			 			
+			 			<div class="wrap_sub">
+			 				<div class="bg_sub">
+			 					
+					 						<div class="visu_nav visu_them">
+				                              <strong class="depth2">총 관객수 및 매출액</strong>
+				                              <span class="depth3">연도별</span>
+				                            </div>
+					 					
+			 				
+			 				
+			 					<ul class="nav_sub">
+			 						
+			 						
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/them/findYearlyTotalList.do" class="tit_sub">총 관객수 및 매출액</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/them/findYearlyTotalList.do" class="block">연도별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/them/findMonthlyTotalList.do" class="block">월별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/them/findWeeklyTotalList.do" class="block">요일별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/them/findDailyTotalList.do" class="block">일별</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/them/findNationalityShareList.do" class="tit_sub">국적별 점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/them/findAreaShareList.do" class="tit_sub">지역별 점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/them/findShowTypeShareList.do" class="tit_sub">상영타입별 점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/them/findRatingShareList.do" class="tit_sub">등급별 점유율</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 					</ul>
+			 				</div>
+			 			</div>
+			 		</li>
+			 	
+			 		<li class="depth1 nav4 headerWidth">
+			 			<a href="javascript:;" class="tit_nav">
+			 				공식통계
+			 			</a>
+			 			
+			 			<div class="wrap_sub">
+			 				<div class="bg_sub">
+			 					
+					 						<div class="visu_nav visu_offc">
+				                              <strong class="depth2">개봉일람</strong>
+				                              <span class="depth3">연도별</span>
+				                            </div>
+					 					
+			 				
+			 				
+			 					<ul class="nav_sub">
+			 						
+			 						
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/offc/searchOfficHitTotList.do?searchMode=year" class="tit_sub">개봉일람</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/offc/searchOfficHitTotList.do?searchMode=year" class="block">연도별</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/stat/offc/searchOfficHitTotList.do?searchMode=month" class="block">월별</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/offc/findYearlyBoxOfficeList.do" class="tit_sub">연도별 박스오피스</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/offc/findFormerBoxOfficeList.do" class="tit_sub">역대 박스오피스</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 					</ul>
+			 				</div>
+			 			</div>
+			 		</li>
+			 	
+			 		<li class="depth1 nav5 headerWidth">
+			 			<a href="javascript:;" class="tit_nav">
+			 				온라인상영관 박스오피스
+			 			</a>
+			 			
+			 			<div class="wrap_sub">
+			 				<div class="bg_sub">
+			 					
+					 						<div class="visu_nav visu_online">
+				                              <strong class="depth2">온라인상영관통합전산망 소개</strong>
+				                              <!-- <span class="depth3">일간 이용순위</span> -->
+				                            </div>
+					 					
+			 				
+			 				
+			 					<ul class="nav_sub">
+			 						
+			 						
+			 								<li class="depth2">
+			 									<a href="/kobis/business/stat/online/onlineintro.do" class="tit_sub">온라인상영관통합전산망 소개</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 					</ul>
+			 				</div>
+			 			</div>
+			 		</li>
+			 	
+			 		<li class="depth1 nav6 headerWidth">
+			 			<a href="javascript:;" class="tit_nav">
+			 				고객센터
+			 			</a>
+			 			
+			 			<div class="wrap_sub">
+			 				<div class="bg_sub">
+			 					
+					 						<div class="visu_nav visu_cs">
+				                              <strong class="depth2">공지사항</strong>
+				                              <span class="depth3"></span>
+				                            </div>
+					 					
+			 				
+			 				
+			 					<ul class="nav_sub">
+			 						
+			 						
+			 								<li class="depth2">
+			 									<a href="/kobis/business/comm/ntfy/findCustomerNotifyList.do" class="tit_sub">공지사항</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/comm/comm/openKobisIntro.do" class="tit_sub">KOBIS소개</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openKobisIntro.do" class="block">KOBIS소개</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openCinemAconnect.do" class="block">영화상영관연동안내</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openMemBerJoin.do" class="block">회원가입안내</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/fimsCodeSuggest.do" class="block">FIMS 코드 신청안내</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/actorInfo.do" class="block">영화인 작품참여내역서 이용안내</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openOffTheater.do" class="block">비상설 상영장 가입안내</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openStatute.do" class="block">영비법</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openPrivacyAgreement.do" class="block">개인정보처리방침</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openSiteMap.do" class="block">SITE MAP</a>
+			 												</li>
+			 											
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/comm/openLocation.do" class="block">오시는 길</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/comm/bord/listMyTip.do?bizLogicType=3" class="tit_sub">정보수정요청</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 												<li class="depth3">
+			 													<a href="/kobis/business/comm/bord/insertTip.do" class="block">정보수정요청 등록</a>
+			 												</li>
+			 											
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/comm/user/openLogin.do" class="tit_sub">로그인</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/comm/user/openRegiUser.do" class="tit_sub">회원가입</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/comm/comm/openFaq.do" class="tit_sub">FAQ</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 								<li class="depth2">
+			 									<a href="/kobis/business/sati/findSatiReqList.do" class="tit_sub">설문조사</a>			 									
+			 									
+			 									<ul class="ovf overdepth">
+			 										
+			 									</ul>
+			 								</li>
+			 							
+			 					</ul>
+			 				</div>
+			 			</div>
+			 		</li>
+			 	
+			</ul>
+		</div>
+ </div>
+ 
+<!-- //header -->
+    <!-- container -->
+    <div id="container">
+    
+<div id="snb">
+		
+	 	 	<h2 class="blind">
+            	박스오피스
+            </h2>
+            <h3>
+            	박스오피스
+            </h3>
+ 			<ul class="list_snb">
+ 		
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="232">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findDailyBoxOfficeList.do">박스오피스</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="233"> 
+			 										<a href="/kobis/business/stat/boxs/findDailyBoxOfficeList.do" class="block">일별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="234"> 
+			 										<a href="/kobis/business/stat/boxs/findWeeklyBoxOfficeList.do" class="block">주간/주말</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="235"> 
+			 										<a href="/kobis/business/stat/boxs/findMonthlyBoxOfficeList.do" class="block">월별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="236"> 
+			 										<a href="/kobis/business/stat/boxs/findYearlyBoxOfficeList.do" class="block">연도별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="237"> 
+			 										<a href="/kobis/business/stat/boxs/findFormerBoxOfficeList.do" class="block">역대</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="238"> 
+			 										<a href="/kobis/business/stat/boxs/findPeriodBoxOfficeList.do" class="block">기간별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="1100" class="on">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findWeekendForeignBoxOfficeList.do">해외 박스오피스</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="1101"> 
+			 										<a href="/kobis/business/stat/boxs/findWeekendForeignBoxOfficeList.do" class="block">주말</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="244">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findRealTicketList.do">예매율</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="245"> 
+			 										<a href="/kobis/business/stat/boxs/findRealTicketList.do" class="block">실시간</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="247">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findDailySeatTicketList.do">좌석점유율</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="248"> 
+			 										<a href="/kobis/business/stat/boxs/findDailySeatTicketList.do" class="block">일별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="249"> 
+			 										<a href="/kobis/business/stat/boxs/findWeeklySeatTicketList.do" class="block">주간/주말</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="250"> 
+			 										<a href="/kobis/business/stat/boxs/findPeriodSeatTicketList.do" class="block">기간별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="1140">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findDailyShowTicketList.do">상영점유율</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="1141"> 
+			 										<a href="/kobis/business/stat/boxs/findDailyShowTicketList.do" class="block">일별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="1143"> 
+			 										<a href="/kobis/business/stat/boxs/findWeeklyShowTicketList.do" class="block">주간/주말</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="1145"> 
+			 										<a href="/kobis/business/stat/boxs/findPeriodShowTicketList.do" class="block">기간별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="251">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findDailyScreenTicketList.do">스크린점유율</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="252"> 
+			 										<a href="/kobis/business/stat/boxs/findDailyScreenTicketList.do" class="block">일별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="253"> 
+			 										<a href="/kobis/business/stat/boxs/findWeeklyScreenTicketList.do" class="block">주간/주말</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 										
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="254"> 
+			 										<a href="/kobis/business/stat/boxs/findPeriodScreenTicketList.do" class="block">기간별</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="1530">
+		 				<strong class="tit"><a href="/kobis/business/stat/unfair/findDailyShowFrequency.do">공정신호등</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="1531"> 
+			 										<a href="/kobis/business/stat/unfair/findDailyShowFrequency.do" class="block">공정신호등(상영회차별 점유상황)</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 			
+ 				<!-- 메뉴 대시보드 제거 하드코딩 c:choose 삭제 -->
+ 				
+		 			<li no="1200">
+		 				<strong class="tit"><a href="/kobis/business/stat/boxs/findDailyMultichainList.do">체인영화관별 상영현황</a></strong>
+		 				
+		                    <a href="javascript:;" class="hidetxt"><span class="ico_comm">펼쳐보기</span></a>
+		                    <ul class="list_submenu">
+			 						
+			 								<!-- 메뉴 하드코딩 c:choose 제거2 --> 
+			 								
+			 										<li no="1201"> 
+			 										<a href="/kobis/business/stat/boxs/findDailyMultichainList.do" class="block">멀티체인별 상영현황</a>
+			 										<ul>
+										 				
+										 				</ul>
+										 			</li>
+			 									
+			 				</ul>
+		 				
+		 			</li>
+		 				
+ 			</ul>
+ 			
+</div>	
+
+
+             
+    	<div id="content"> 
+            <!-- 타이틀 & 현재 페이지 위치 -->
+             
+	<div class="hd">
+		<h4 class="tit" no="1100">
+				
+				<img src="/kobis/web/comm/images/stat/title_rentrakBoxes.gif" alt="해외 박스오피스">
+		</h4>
+		<strong class="blind">해외 박스오피스</strong>
+	<ul class="locate">
+		<li><a href="/kobis/business/main/main.do"><span class="ico_comm">홈</span></a></li>
+	
+			<li><a href="/kobis/business/stat/boxs/findDailyBoxOfficeList.do">박스오피스</a></li>
+		
+			<li> <strong>해외 박스오피스</strong></li>
+		
+	</ul>
+	</div>
+	
+	
+            <!-- //타이틀 & 현재 페이지 위치 -->
+
+			<div class="box_gray">
+            	<p class="dot01"><span class="fwb">[해외박스오피스]</span>의 정보는 Rentrak으로부터 제공받습니다.</p>
+            	<p class="dot01">해외박스오피스는 2013년 7월 1일(27주차)부터 서비스가 시작되었습니다.</p>
+            	<p class="dot01">해외박스오피스의 정보는 매주 화요일(06시30분, 09시), 수요일(06시), 목요일(06시)에 국가별로 갱신됩니다. 썸머타임 적용 시 1시간 앞당겨 집니다.</p>
+            	<p class="dot01">순위는 해당 집계기간(주말)의 매출액 기준입니다.</p>
+            	<p class="dot01"><span class="fwb udline">프랑스의 순위는 해당 집계기간(주말)의 관객수 기준입니다.</span></p>            	
+            </div>
+            
+            <div class="tar"></div>
+            <div class="tab1">
+            	<ul class="list_tab">                	
+					<li class="active"><a href="#tab1">미국</a></li>
+					<li><a href="#tab2">영국</a></li>
+					<li><a href="#tab3">독일</a></li>
+					<li><a href="#tab4">프랑스</a></li>
+					<li><a href="#tab5">일본</a></li>
+                </ul>
+            </div>            
+            
+            <div class="area_line" style="border-top: 0px;margin: 0;">
+            <form action="findWeekendForeignBoxOfficeList.do" id="searchForm" name="searchForm" method="post">
+            <input type="hidden" name="CSRFToken" value="UI5cNQ5CIuUDgLXyVDvOyAu5lZnMElwifn2wiYkNgLo" autocomplete="off">
+            <input type="hidden" id="startYMD" name="startYMD" value="20250320" autocomplete="off" class="hasDatepicker">
+			<input type="hidden" id="endYMD" name="endYMD" value="20250411" autocomplete="off" class="hasDatepicker">
+			<input type="hidden" id="tmpDate" autocomplete="off" class="hasDatepicker">
+			<input type="hidden" id="sRepNationCd" name="sRepNationCd" value="US" autocomplete="off">            
+            <input type="hidden" name="searchType" value="search" autocomplete="off">
+            
+            <div class="ins">
+				<div class="item">
+					<strong class="dot01">
+						조회기간
+						<a href="javascript:;" class="tooltip">
+							<span class="ico_comm">설명 보기</span>
+							<span class="layer_desc">최대 조회기간은 4주입니다.</span>
+						</a>
+					</strong>
+					<div class="period">
+						<div class="fl">
+							<label for="sSearchFrom" class="btn_cal"><span class="ico_comm">달력</span></label>
+							<div class="tf_comm">
+								<input type="text" id="sSearchFrom" name="sSearchFrom" class="tf tf_cal hasDatepicker" value="" onchange="fn_chkDataRange(this,'START')" autocomplete="off">
+							</div>
+						</div>
+						<span style="display: inline-block;float: left;margin:0 5px">~</span>
+						<div class="fl">
+							<label for="sSearchTo" class="btn_cal"><span class="ico_comm">달력</span></label>
+							<div class="tf_comm">
+								<input type="text" id="sSearchTo" name="sSearchTo" class="tf tf_cal hasDatepicker" value="" onchange="fn_chkDataRange(this,'END')" autocomplete="off">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="wrap_btn">
+					<button type="button" class="btn_blue" onclick="chkform('search'); return false;">조회</button>							
+				</div>
+			</div>			
+            </form>                
+            </div>
+            
+            <div class="rentrak">
+				<!-- 170829 추가 -->				
+				<div class="box_rentrak">전 세계의 TV, 영화산업의 전문인들과 광고인들은 RENTRAK("렌트랙")이 제공하는 안정적이고 강력한 매체 소비 측정 서비스를 의존하여 박스오피스 멀티스크린, TV, 홈비디오 등의 여러 플랫폼에 걸쳐 정확한 타겟 광고를 구현하고 그들의 비즈니스 목표를 달성하고 있습니다.</div>
+			</div>
+           
+			<fieldset id="tab1">
+            <div class="rst_sch">
+            	<div class="hd_rst">
+					<span class="total">총 <em class="fwb">40</em>건</span>
+					<div class="fr" style="margin-top: 17px;">
+						<a href="javascript:;" class="btn_rentrak"><img src="/kobis/web/comm/images/main/btn_rentrak.png" alt="RENTRAK"></a>						
+					</div>
+				</div>
+				
+						<div class="board_tit">
+							<div style="float:left;">
+								<h4>15주차 (2025년 04월 11일 ~ 2025년 04월 13일)</h4>
+							</div>
+							<div style="float:right;">
+								<span><em><b>최종 수신 시간 : 2025/04/17 06:00:00</b></em></span>
+							</div>
+						</div>
+						
+						<table class="tbl_comm" id="table_0">
+							<caption class="blind">주말 해외 박스오피스 검색 리스트</caption>
+							<colgroup>
+								
+									<col style="width:7%">
+									<col style="width:28%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:20%">
+								
+							</colgroup>
+		
+							<thead>
+								<tr>
+									
+										<th scope="col">순위</th>
+										<th scope="col">영화명</th>
+										<th scope="col">개봉일</th>
+										<th scope="col">주말매출액</th>
+										<th scope="col">누적매출액</th>
+										<th scope="col">배급사</th>
+									
+								</tr>
+							</thead>
+		
+							<tbody id="tbody_0">
+								
+											<tr>
+												
+												<td id="td_rank">
+													1
+												</td>
+												<td class="tal">
+													Minecraft Movie, A
+												</td>
+												<td>
+													2025-04-04
+												</td>
+												<td class="tar">
+													$ 78,503,124
+												</td>
+												<td class="tar">
+													$ 291,338,262
+												</td>
+												<td class="tal">
+													Warner Bros.
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													2
+												</td>
+												<td class="tal">
+													King of Kings, The
+												</td>
+												<td>
+													2025-04-11
+												</td>
+												<td class="tar">
+													$ 19,371,296
+												</td>
+												<td class="tar">
+													$ 21,016,115
+												</td>
+												<td class="tal">
+													Angel Studios
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													3
+												</td>
+												<td class="tal">
+													Amateur, The
+												</td>
+												<td>
+													2025-04-11
+												</td>
+												<td class="tar">
+													$ 14,802,849
+												</td>
+												<td class="tar">
+													$ 15,931,042
+												</td>
+												<td class="tal">
+													20th Century Studios
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													4
+												</td>
+												<td class="tal">
+													Warfare
+												</td>
+												<td>
+													2025-04-11
+												</td>
+												<td class="tar">
+													$ 8,174,214
+												</td>
+												<td class="tar">
+													$ 8,174,214
+												</td>
+												<td class="tal">
+													A24
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													5
+												</td>
+												<td class="tal">
+													Drop
+												</td>
+												<td>
+													2025-04-11
+												</td>
+												<td class="tar">
+													$ 7,397,015
+												</td>
+												<td class="tar">
+													$ 8,909,610
+												</td>
+												<td class="tal">
+													Universal
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													6
+												</td>
+												<td class="tal">
+													Chosen: Last Supper (Season 5) Part 3, The
+												</td>
+												<td>
+													2025-04-11
+												</td>
+												<td class="tar">
+													$ 6,328,758
+												</td>
+												<td class="tar">
+													$ 7,214,144
+												</td>
+												<td class="tal">
+													Fathom Entertainment
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													7
+												</td>
+												<td class="tal">
+													Working Man, A
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 3,003,335
+												</td>
+												<td class="tar">
+													$ 34,170,959
+												</td>
+												<td class="tal">
+													Amazon MGM Studios
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													8
+												</td>
+												<td class="tal">
+													Disney's Snow White
+												</td>
+												<td>
+													2025-03-21
+												</td>
+												<td class="tar">
+													$ 2,894,625
+												</td>
+												<td class="tar">
+													$ 82,267,653
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													9
+												</td>
+												<td class="tal">
+													Woman in the Yard, The
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 2,099,470
+												</td>
+												<td class="tar">
+													$ 20,819,740
+												</td>
+												<td class="tal">
+													Universal
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													10
+												</td>
+												<td class="tal">
+													Chosen: Last Supper (Season 5) Part 2, The
+												</td>
+												<td>
+													2025-04-04
+												</td>
+												<td class="tar">
+													$ 963,062
+												</td>
+												<td class="tar">
+													$ 11,626,943
+												</td>
+												<td class="tal">
+													Fathom Entertainment
+												</td>
+											</tr>
+										
+		
+								</tbody></table><table><tbody><tr height="30px;"><td></td></tr></tbody></table>
+							
+										
+					
+						<div class="board_tit">
+							<div style="float:left;">
+								<h4>14주차 (2025년 04월 04일 ~ 2025년 04월 06일)</h4>
+							</div>
+							<div style="float:right;">
+								<span><em><b>최종 수신 시간 : 2025/04/10 06:00:00</b></em></span>
+							</div>
+						</div>
+						
+						<table class="tbl_comm" id="table_10">
+							<caption class="blind">주말 해외 박스오피스 검색 리스트</caption>
+							<colgroup>
+								
+									<col style="width:7%">
+									<col style="width:28%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:20%">
+								
+							</colgroup>
+		
+							<thead>
+								<tr>
+									
+										<th scope="col">순위</th>
+										<th scope="col">영화명</th>
+										<th scope="col">개봉일</th>
+										<th scope="col">주말매출액</th>
+										<th scope="col">누적매출액</th>
+										<th scope="col">배급사</th>
+									
+								</tr>
+							</thead>
+		
+							<tbody id="tbody_10">
+								
+											<tr>
+												
+												<td id="td_rank">
+													1
+												</td>
+												<td class="tal">
+													Minecraft Movie, A
+												</td>
+												<td>
+													2025-04-04
+												</td>
+												<td class="tar">
+													$ 162,753,003
+												</td>
+												<td class="tar">
+													$ 172,680,122
+												</td>
+												<td class="tal">
+													Warner Bros.
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													2
+												</td>
+												<td class="tal">
+													Working Man, A
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 7,335,794
+												</td>
+												<td class="tar">
+													$ 29,470,372
+												</td>
+												<td class="tal">
+													Amazon MGM Studios
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													3
+												</td>
+												<td class="tal">
+													Chosen: Last Supper (Season 5) Part 2, The
+												</td>
+												<td>
+													2025-04-04
+												</td>
+												<td class="tar">
+													$ 7,281,733
+												</td>
+												<td class="tar">
+													$ 9,275,312
+												</td>
+												<td class="tal">
+													Fathom Entertainment
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													4
+												</td>
+												<td class="tal">
+													Disney's Snow White
+												</td>
+												<td>
+													2025-03-21
+												</td>
+												<td class="tar">
+													$ 5,940,821
+												</td>
+												<td class="tar">
+													$ 77,725,601
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													5
+												</td>
+												<td class="tal">
+													Woman in the Yard, The
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 4,518,720
+												</td>
+												<td class="tar">
+													$ 17,601,640
+												</td>
+												<td class="tal">
+													Universal
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													6
+												</td>
+												<td class="tal">
+													Death of a Unicorn
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 2,532,098
+												</td>
+												<td class="tar">
+													$ 10,355,727
+												</td>
+												<td class="tal">
+													A24
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													7
+												</td>
+												<td class="tal">
+													Chosen: Last Supper (Season 5) Part 1, The
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 1,903,187
+												</td>
+												<td class="tar">
+													$ 19,309,254
+												</td>
+												<td class="tal">
+													Fathom Entertainment
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													8
+												</td>
+												<td class="tal">
+													Hell of a Summer
+												</td>
+												<td>
+													2025-04-04
+												</td>
+												<td class="tar">
+													$ 1,765,814
+												</td>
+												<td class="tar">
+													$ 2,191,433
+												</td>
+												<td class="tal">
+													Neon Rated
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													9
+												</td>
+												<td class="tal">
+													Friend, The
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 1,647,049
+												</td>
+												<td class="tar">
+													$ 2,228,342
+												</td>
+												<td class="tal">
+													Bleecker Street
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													10
+												</td>
+												<td class="tal">
+													Captain America: Brave New World
+												</td>
+												<td>
+													2025-02-14
+												</td>
+												<td class="tar">
+													$ 1,354,070
+												</td>
+												<td class="tar">
+													$ 199,209,280
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+		
+								</tbody></table><table><tbody><tr height="30px;"><td></td></tr></tbody></table>
+							
+										
+					
+						<div class="board_tit">
+							<div style="float:left;">
+								<h4>13주차 (2025년 03월 28일 ~ 2025년 03월 30일)</h4>
+							</div>
+							<div style="float:right;">
+								<span><em><b>최종 수신 시간 : 2025/04/03 06:00:00</b></em></span>
+							</div>
+						</div>
+						
+						<table class="tbl_comm" id="table_20">
+							<caption class="blind">주말 해외 박스오피스 검색 리스트</caption>
+							<colgroup>
+								
+									<col style="width:7%">
+									<col style="width:28%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:20%">
+								
+							</colgroup>
+		
+							<thead>
+								<tr>
+									
+										<th scope="col">순위</th>
+										<th scope="col">영화명</th>
+										<th scope="col">개봉일</th>
+										<th scope="col">주말매출액</th>
+										<th scope="col">누적매출액</th>
+										<th scope="col">배급사</th>
+									
+								</tr>
+							</thead>
+		
+							<tbody id="tbody_20">
+								
+											<tr>
+												
+												<td id="td_rank">
+													1
+												</td>
+												<td class="tal">
+													Working Man, A
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 15,510,312
+												</td>
+												<td class="tar">
+													$ 18,660,973
+												</td>
+												<td class="tal">
+													Amazon MGM Studios
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													2
+												</td>
+												<td class="tal">
+													Disney's Snow White
+												</td>
+												<td>
+													2025-03-21
+												</td>
+												<td class="tar">
+													$ 14,331,715
+												</td>
+												<td class="tar">
+													$ 69,835,869
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													3
+												</td>
+												<td class="tal">
+													Chosen: Last Supper (Season 5) Part 1, The
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 12,189,468
+												</td>
+												<td class="tar">
+													$ 13,574,745
+												</td>
+												<td class="tal">
+													Fathom Entertainment
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													4
+												</td>
+												<td class="tal">
+													Woman in the Yard, The
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 9,395,255
+												</td>
+												<td class="tar">
+													$ 10,149,115
+												</td>
+												<td class="tal">
+													Universal
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													5
+												</td>
+												<td class="tal">
+													Death of a Unicorn
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 5,676,542
+												</td>
+												<td class="tar">
+													$ 5,676,542
+												</td>
+												<td class="tal">
+													A24
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													6
+												</td>
+												<td class="tal">
+													Princess Mononoke 4K
+												</td>
+												<td>
+													2025-03-28
+												</td>
+												<td class="tar">
+													$ 3,881,024
+												</td>
+												<td class="tar">
+													$ 4,892,651
+												</td>
+												<td class="tal">
+													GKIDS
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													7
+												</td>
+												<td class="tal">
+													Captain America: Brave New World
+												</td>
+												<td>
+													2025-02-14
+												</td>
+												<td class="tar">
+													$ 2,923,352
+												</td>
+												<td class="tar">
+													$ 197,316,662
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													8
+												</td>
+												<td class="tal">
+													Black Bag
+												</td>
+												<td>
+													2025-03-14
+												</td>
+												<td class="tar">
+													$ 2,196,620
+												</td>
+												<td class="tar">
+													$ 18,980,955
+												</td>
+												<td class="tal">
+													Focus Features
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													9
+												</td>
+												<td class="tal">
+													Mickey 17
+												</td>
+												<td>
+													2025-03-07
+												</td>
+												<td class="tar">
+													$ 1,934,800
+												</td>
+												<td class="tar">
+													$ 44,104,880
+												</td>
+												<td class="tal">
+													Warner Bros.
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													10
+												</td>
+												<td class="tal">
+													Novocaine
+												</td>
+												<td>
+													2025-03-14
+												</td>
+												<td class="tar">
+													$ 1,475,428
+												</td>
+												<td class="tar">
+													$ 19,226,268
+												</td>
+												<td class="tal">
+													Paramount
+												</td>
+											</tr>
+										
+		
+								</tbody></table><table><tbody><tr height="30px;"><td></td></tr></tbody></table>
+							
+										
+					
+						<div class="board_tit">
+							<div style="float:left;">
+								<h4>12주차 (2025년 03월 21일 ~ 2025년 03월 23일)</h4>
+							</div>
+							<div style="float:right;">
+								<span><em><b>최종 수신 시간 : 2025/03/27 06:00:00</b></em></span>
+							</div>
+						</div>
+						
+						<table class="tbl_comm" id="table_30">
+							<caption class="blind">주말 해외 박스오피스 검색 리스트</caption>
+							<colgroup>
+								
+									<col style="width:7%">
+									<col style="width:28%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:15%">
+									<col style="width:20%">
+								
+							</colgroup>
+		
+							<thead>
+								<tr>
+									
+										<th scope="col">순위</th>
+										<th scope="col">영화명</th>
+										<th scope="col">개봉일</th>
+										<th scope="col">주말매출액</th>
+										<th scope="col">누적매출액</th>
+										<th scope="col">배급사</th>
+									
+								</tr>
+							</thead>
+		
+							<tbody id="tbody_30">
+								
+											<tr>
+												
+												<td id="td_rank">
+													1
+												</td>
+												<td class="tal">
+													Disney's Snow White
+												</td>
+												<td>
+													2025-03-21
+												</td>
+												<td class="tar">
+													$ 42,206,415
+												</td>
+												<td class="tar">
+													$ 48,722,185
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													2
+												</td>
+												<td class="tal">
+													Black Bag
+												</td>
+												<td>
+													2025-03-14
+												</td>
+												<td class="tar">
+													$ 4,260,110
+												</td>
+												<td class="tar">
+													$ 15,811,020
+												</td>
+												<td class="tal">
+													Focus Features
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													3
+												</td>
+												<td class="tal">
+													Captain America: Brave New World
+												</td>
+												<td>
+													2025-02-14
+												</td>
+												<td class="tar">
+													$ 4,024,207
+												</td>
+												<td class="tar">
+													$ 192,958,204
+												</td>
+												<td class="tal">
+													Disney
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													4
+												</td>
+												<td class="tal">
+													Novocaine
+												</td>
+												<td>
+													2025-03-14
+												</td>
+												<td class="tar">
+													$ 3,683,405
+												</td>
+												<td class="tar">
+													$ 16,669,464
+												</td>
+												<td class="tal">
+													Paramount
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													5
+												</td>
+												<td class="tal">
+													Mickey 17
+												</td>
+												<td>
+													2025-03-07
+												</td>
+												<td class="tar">
+													$ 3,679,656
+												</td>
+												<td class="tar">
+													$ 40,385,532
+												</td>
+												<td class="tal">
+													Warner Bros.
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													6
+												</td>
+												<td class="tal">
+													Alto Knights, The
+												</td>
+												<td>
+													2025-03-21
+												</td>
+												<td class="tar">
+													$ 3,165,349
+												</td>
+												<td class="tar">
+													$ 3,460,041
+												</td>
+												<td class="tal">
+													Warner Bros.
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													7
+												</td>
+												<td class="tal">
+													Day the Earth Blew Up: A Looney Tunes Movie, The
+												</td>
+												<td>
+													2025-03-14
+												</td>
+												<td class="tar">
+													$ 1,878,560
+												</td>
+												<td class="tar">
+													$ 7,002,009
+												</td>
+												<td class="tal">
+													Falling Forward Films
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													8
+												</td>
+												<td class="tal">
+													Monkey, The
+												</td>
+												<td>
+													2025-02-21
+												</td>
+												<td class="tar">
+													$ 1,508,053
+												</td>
+												<td class="tar">
+													$ 37,973,691
+												</td>
+												<td class="tal">
+													Neon Rated
+												</td>
+											</tr>
+										
+											<tr>
+												
+												<td id="td_rank">
+													9
+												</td>
+												<td class="tal">
+													Dog Man
+												</td>
+												<td>
+													2025-01-31
+												</td>
+												<td class="tar">
+													$ 1,486,620
+												</td>
+												<td class="tar">
+													$ 96,059,395
+												</td>
+												<td class="tal">
+													Universal
+												</td>
+											</tr>
+										
+											<tr class="even">
+												
+												<td id="td_rank">
+													10
+												</td>
+												<td class="tal">
+													Last Supper, The
+												</td>
+												<td>
+													2025-03-14
+												</td>
+												<td class="tar">
+													$ 1,344,560
+												</td>
+												<td class="tar">
+													$ 5,477,799
+												</td>
+												<td class="tal">
+													Emick
+												</td>
+											</tr>
+										
+		
+								</tbody></table><table><tbody><tr height="30px;"><td></td></tr></tbody></table>
+							
+										
+					
+				</div>
+			</fieldset>
+            </div> 
+        </div>
+      <!-- // container -->
+      
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="/kobis/web/comm/commjs/gtag.js?id=UA-127072686-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-127072686-1');
+</script>
+
+<!-- AceCounter Log Gathering Script V.8.0.AMZ2019080601 -->
+ <script language="javascript">
+	var _AceGID=(function(){var Inf=['gtt6.acecounter.com','8080','AB2A31560820885','AW','0','NaPm,Ncisy','ALL','0']; var _CI=(!_AceGID)?[]:_AceGID.val;var _N=0;var _T=new Image(0,0);if(_CI.join('.').indexOf(Inf[3])<0){ _T.src ="https://"+ Inf[0] +'/?cookie'; _CI.push(Inf);  _N=_CI.length; } return {o: _N,val:_CI}; })();
+	var _AceCounter=(function(){var G=_AceGID;var _sc=document.createElement('script');var _sm=document.getElementsByTagName('script')[0];if(G.o!=0){var _A=G.val[G.o-1];var _G=(_A[0]).substr(0,_A[0].indexOf('.'));var _C=(_A[7]!='0')?(_A[2]):_A[3];var _U=(_A[5]).replace(/\,/g,'_');_sc.src='https:'+'//cr.acecounter.com/Web/AceCounter_'+_C+'.js?gc='+_A[2]+'&py='+_A[4]+'&gd='+_G+'&gp='+_A[1]+'&up='+_U+'&rd='+(new Date().getTime());_sm.parentNode.insertBefore(_sc,_sm);return _sc.src;}})();
+</script>
+<noscript><img src='//gtt6.acecounter.com:8080/?uid=AB2A31560820885&je=n&' border='0' width='0' height='0' alt=''></noscript>	
+<!-- AceCounter Log Gathering Script End -->
+
+<script language="javascript">
+function familySite(){
+   if (document.getElementById("familySite").value == "a2") {
+	   window.open ("https://www.kofic.or.kr");
+   } else if (document.getElementById("familySite").value == "a3") {
+	   window.open ("https://www.kobis.or.kr/kobisopenapi/homepg/main/main.do");
+   }
+}
+</script>
+<!-- AceCounter Log Gathering Script End -->
+	<div id="footer">
+    	<div class="cont">
+        	<div class="foot_link">
+                <ul class="fl">
+                    <li><a href="/kobis/business/comm/comm/openKobisIntro.do">KOBIS 소개</a></li>
+                    <li><a href="/kobis/business/comm/comm/openCinemAconnect.do">영화상영관 연동안내</a></li>
+                    <li><a href="/kobis/business/comm/comm/openPrivacyAgreement.do">개인정보처리방침</a></li>
+                    <li><a href="/kobis/business/comm/ntfy/findCustomerNotifyList.do">고객센터</a></li>
+                    <li><a href="/kobis/business/comm/bord/listMyTip.do?bizLogicType=3">정보수정요청</a></li>
+                    <li><a href="/kobis/business/comm/comm/openSiteMap.do">사이트맵</a></li>
+                </ul>
+                <div class="sites">
+                	<select class="slt" id="familySite" name="familySite" onchange="familySite();">
+                    	<option value="a1">Family Site</option>
+                    	<option value="a2">KOFIC</option>
+                    	<option value="a3">OpenAPI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="foot_info">
+            	<strong class="fl"><a href="#none" class="block"><img src="/kobis/web/comm/images/comm/footer_logo.png" alt="KOFIC 영화진흥위원회 - Korean Film Council"></a></strong>
+                <div class="ovf">
+                	<span style="margin-right: 17px;">(48058) 부산광역시 해운대구 수영강변대로 130(우동)</span><br>
+                    <span style="margin-right: 17px;">02-6261-6573</span>
+                    <span style="margin-right: 17px;">E-mail:&nbsp;kobis@kofic.or.kr</span>
+                    <span style="margin-right: 17px;">이용시간: 09:00 ~ 18:00(평일)</span>
+                    <p>COPYRIGHT(C) KOREAN FILM COUNCIL ALL RIGHTS RESERVED.</p>
+            	</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- 공통 js/css -->
+<script type="text/javascript">
+var isFocus = true;
+
+function chkform(val) {
+	if(val == "search") {
+			fn_showProgressBar();
+			//open_close();
+		$("[name=searchType]").val(val);
+		$("#searchForm").submit();
+	} else if(val == "excel") {
+		if(!confirm('많은 양의 데이터를 다운로드시 시간이 오래 걸릴 수 있습니다. 엑셀로 다운받으시겠습니까?')) return false;
+
+		$("[name=searchType]").val(val);
+		$("#searchForm").submit();
+	}
+}
+
+$(function() {
+	var $target = "";
+	
+	if($("#sRepNationCd").val() == "US") {
+		$target = $("a[href^='#tab1']");
+	} else if($("#sRepNationCd").val() == "UK") {
+		$target = $("a[href^='#tab2']");
+	} else if($("#sRepNationCd").val() == "DE") {
+		$target = $("a[href^='#tab3']");
+	} else if($("#sRepNationCd").val() == "FR") {
+		$target = $("a[href^='#tab4']");
+	} else if($("#sRepNationCd").val() == "JP") {
+		$target = $("a[href^='#tab5']");
+	}
+
+	$target.parent("li").attr("class","active").siblings("li").find("a").removeClass("active");
+	$($target.attr("href")).siblings("[id^='tab']").hide();
+	$($target.attr("href")).show();
+
+	var week = gfn_GetWeek($("#startYMD").val());
+	$("#sSearchFrom").val(week+"주차");
+
+	week = gfn_GetWeek($("#endYMD").val());
+	$("#sSearchTo").val(week+"주차");
+
+	$("#sSearchFrom").datepicker({
+		changeMonth:true,
+		changeYear:true,
+		yearRange: 'c-100:c+100',
+		wkVal: 0,
+		dateFormat: 'yymmdd'
+	});
+	$("#sSearchTo").datepicker({
+		changeMonth:true,
+		changeYear:true,
+		yearRange: 'c-100:c+100',
+		wkVal: 0,
+		dateFormat: 'yymmdd'
+	});
+	$("#startYMD").datepicker({
+		dateFormat: 'yymmdd'
+	});
+	$("#endYMD").datepicker({
+		dateFormat: 'yymmdd'
+	});
+	$("#tmpDate").datepicker({
+		dateFormat: 'yymmdd'
+	});
+
+	$("#sSearchFrom").focus(function(){
+		if(isFocus){
+			isFocus=false;
+			var sSearchFrom = $("#sSearchFrom").val();
+			$("#sSearchFrom").datepicker("setDate",$("#startYMD").val());
+			$("#sSearchFrom").val(sSearchFrom);
+		}
+	});
+	$("#sSearchTo").focus(function(){
+		if(isFocus){
+			isFocus=false;
+			var sSearchTo = $("#sSearchTo").val();
+			$("#sSearchTo").datepicker("setDate",$("#endYMD").val());
+			$("#sSearchTo").val(sSearchTo);
+		}
+	});
+
+	// 탭버튼 제어
+	$("a[href^='#tab']").on("click", function(event){		
+		var $target = $(this);
+		$target.parent("li").attr("class","active").siblings("li").removeClass("active");
+		$($target.attr("href")).siblings("[id^='tab']").hide();
+		$($target.attr("href")).show();
+
+		var nation = $target.html();
+
+		if(nation == "미국"){
+			$("#sRepNationCd").val("US");
+		} else if(nation == "영국"){
+			$("#sRepNationCd").val("UK");
+		} else if(nation == "독일"){
+			$("#sRepNationCd").val("DE");
+		} else if(nation == "프랑스"){
+			$("#sRepNationCd").val("FR");
+		} else if(nation == "일본"){
+			$("#sRepNationCd").val("JP");
+		}
+
+		chkform("search");
+
+		return false;
+	});
+	
+	$(".btn_rentrak").hover(
+		function(){
+			$(".box_rentrak").show();	
+		}, function(){
+			$(".box_rentrak").hide();
+		}
+	);
+});
+
+function fn_chkDataRange(obj, type){
+	if(type == "START"){
+		$("#tmpDate").datepicker("setDate",$("#sSearchFrom").val());
+		$("#tmpDate").datepicker("setDate","c+21d");
+		if($("#sSearchFrom").val() > $("#endYMD").val()){
+			$("#endYMD").val($("#tmpDate").val());
+		}
+		else if($("#tmpDate").val() < $("#endYMD").val() ){
+			$("#endYMD").datepicker("setDate", $("#sSearchFrom").val());
+			$("#endYMD").datepicker("setDate", "c+21d");
+			$("#endYMD").val($("#endYMD").val());
+		}
+		$("#startYMD").val($("#sSearchFrom").val());
+	}
+	else{
+		$("#tmpDate").datepicker("setDate",$("#sSearchTo").val());
+		$("#tmpDate").datepicker("setDate","c-21d");
+		if($("#startYMD").val() > $("#sSearchTo").val()){
+			$("#startYMD").datepicker("setDate", $("#tmpDate").val());
+		}
+		else if($("#tmpDate").val() > $("#startYMD").val() ){
+			$("#startYMD").datepicker("setDate", $("#sSearchTo").val());
+			$("#startYMD").datepicker("setDate", "c-21d");
+		}
+		$("#endYMD").val($("#sSearchTo").val());
+	}
+
+	var week = gfn_GetWeek($("#startYMD").val());
+	$("#sSearchFrom").val(week+"주차");
+
+	week = gfn_GetWeek($("#endYMD").val());
+	$("#sSearchTo").val(week+"주차");
+	isFocus = true;
+}
+
+//Rentrak Logo DIV View
+function weekendRentrakLogoView(opt) {
+	if(opt) $("#weekendRentrakLogo").css("display","block");
+	else    $("#weekendRentrakLogo").css("display","none");
+}
+</script>
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>
