@@ -1,0 +1,70 @@
+# ===== Python 기본 =====
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ===== Django =====
+*.log
+*.pot
+*.pyc
+*.mo
+db.sqlite3
+db.sqlite3-journal
+
+# ===== 환경변수 / 설정 =====
+.env
+.env.*
+*.secret
+*.pem
+*.key
+
+# ===== 미디어 / 업로드 파일 =====
+media/
+uploads/
+
+# ===== 마이그레이션 캐시 =====
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+
+# ===== 가상환경 폴더 (예: venv, .venv 등) =====
+venv/
+.venv/
+ENV/
+env/
+Env/
+env.bak/
+venv.bak/
+
+# ===== IDE 설정 파일 =====
+.vscode/
+.idea/
+
+# ===== 운영체제 별 캐시 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 기타 백업/빌드 =====
+*.bak
+*.swp
+*.tmp
+*.log
+
+# ===== PyInstaller =====
+*.spec
+dist/
+build/
+
+# ===== Jupyter / IPython =====
+.ipynb_checkpoints/
+
+# ===== pytest / coverage =====
+.cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ===== Git 자체 =====
+*.orig
