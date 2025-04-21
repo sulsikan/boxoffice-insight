@@ -1,5 +1,35 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from .models import RegionalBoxOffice
+
+# 연도 필터
+class YearListFilter(admin.SimpleListFilter):
+    title = _('기준 시작 연도')
+    parameter_name = 'start_year'
+
+    def lookups(self, request, model_admin):
+        years = RegionalBoxOffice.objects.dates('기준_시작일', 'year')
+        return [(str(y.year), f"{y.year}년") for y in years]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(기준_시작일__year=self.value())
+        return queryset
+
+# 월 필터
+class MonthListFilter(admin.SimpleListFilter):
+    title = _('기준 시작 월')
+    parameter_name = 'start_month'
+
+    def lookups(self, request, model_admin):
+        months = RegionalBoxOffice.objects.dates('기준_시작일', 'month')
+        return [(f"{m.year}-{m.month:02}", f"{m.year}년 {m.month}월") for m in months]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            year, month = map(int, self.value().split("-"))
+            return queryset.filter(기준_시작일__year=year, 기준_시작일__month=month)
+        return queryset
 
 @admin.register(RegionalBoxOffice)
 class RegionalBoxOfficeAdmin(admin.ModelAdmin):
@@ -9,6 +39,8 @@ class RegionalBoxOfficeAdmin(admin.ModelAdmin):
         "외국_상영편수", "외국_매출액", "외국_관객수", "외국_점유율",
         "전체_상영편수", "전체_매출액", "전체_관객수", "전체_점유율",
     )
-    list_filter = ("기준_시작일", "기준_종료일", "지역")
+    list_filter = (
+        "지역", YearListFilter, MonthListFilter
+    )
     search_fields = ("지역",)
     ordering = ("-기준_시작일", "지역")

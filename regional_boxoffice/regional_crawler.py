@@ -22,7 +22,7 @@ import time
 def crawl_regional(start_date, end_date):
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    driver.get("https://www.kobis.or.kr/kobis/business/stat/them/findAreaShareList.do")  # ✅ URL 오타 수정됨
+    driver.get("https://www.kobis.or.kr/kobis/business/stat/them/findAreaShareList.do")
 
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "sSearchFrom")))
     driver.execute_script(f"document.getElementById('sSearchFrom').value = '{start_date}'")
@@ -105,4 +105,6 @@ def crawl_yearly_by_month(year):
             print(f"{start.month}월 데이터 없음")
 
 if __name__ == "__main__":
-    crawl_yearly_by_month(year=2023)
+    for year in range(2004, 2014): 
+        print(f"\n===== {year}년 데이터 수집 시작 =====")
+        crawl_yearly_by_month(year=year)
