@@ -15,11 +15,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from regional_boxoffice.models import RegionalBoxOffice
-from datetime import datetime
+from datetime import date, timedelta, datetime
 import pandas as pd
 import time
 
-def crawl_regional(start_date="2025-04-14", end_date="2025-04-20"):
+def crawl_regional(start_date, end_date):
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.get("https://www.kobis.or.kr/kobis/business/stat/them/findAreaShareList.do")  # ✅ URL 오타 수정됨
@@ -77,15 +77,32 @@ def save_df_to_db(df, 기준_시작일, 기준_종료일):
         )
 
 
+def crawl_yearly_by_month(year):
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+
+    for month in range(1, 13):
+        start = date(year, month, 1)
+        if month == 12:
+            end = date(year + 1, 1, 1) - timedelta(days=1)
+        else:
+            end = date(year, month + 1, 1) - timedelta(days=1)
+
+        if end > yesterday:
+            end = yesterday
+
+        if start > end:
+            continue
+
+        print(f"{start} ~ {end} 크롤링 중...")
+
+        df = crawl_regional(start.strftime("%Y-%m-%d"), end.strftime("%Y-%m-%d"))
+
+        if df is not None and not df.empty:
+            save_df_to_db(df, 기준_시작일=start, 기준_종료일=end)
+            print(f"{start.month}월 데이터 저장 완료")
+        else:
+            print(f"{start.month}월 데이터 없음")
+
 if __name__ == "__main__":
-    start = "2025-03-01"
-    end = "2025-03-31"
-
-    df = crawl_regional(start, end)
-
-    if df is not None and not df.empty:
-        save_df_to_db(df, 기준_시작일=datetime.strptime(start, "%Y-%m-%d").date(),
-                        기준_종료일=datetime.strptime(end, "%Y-%m-%d").date())
-        print("DB 저장 완료")
-    else:
-        print("크롤링된 데이터 없음")
+    crawl_yearly_by_month(year=2023)
