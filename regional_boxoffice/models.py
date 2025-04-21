@@ -22,8 +22,8 @@ class RegionalBoxOffice(models.Model):
     기준_종료일 = models.DateField()
 
     class Meta:
-        verbose_name = "지역별 박스오피스"
-        verbose_name_plural = "지역별 박스오피스"
+        verbose_name = "지역별 점유율"
+        verbose_name_plural = "지역별 점유율"
 
     def __str__(self):
         return f"{self.지역} ({self.기준_시작일} ~ {self.기준_종료일})"
