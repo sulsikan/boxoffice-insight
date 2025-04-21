@@ -1,9 +1,20 @@
+import os
+import sys
+import django
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, BASE_DIR)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boxoffice.settings")
+django.setup()
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from regional_cumulative_stats.models import RegionalCumulativeStats
 import pandas as pd
 import time
 import re
@@ -118,7 +129,23 @@ def crawl_all_movie_area_stats():
     df = clean_and_convert(df)
     return df
 
+def save_to_db(df):
+    for _, row in df.iterrows():
+        try:
+            RegionalCumulativeStats.objects.create(
+                제목=row["제목"],
+                지역=row["지역"],
+                스크린수=row["스크린수"],
+                누적매출액=row["누적매출액(원)"],
+                매출점유율=row["매출점유율(%)"],
+                누적관객수=row["누적관객수(명)"],
+                관객점유율=row["관객점유율(%)"],
+            )
+        except Exception as e:
+            print(f"❌ 저장 실패: {row['제목']} - {row['지역']} → {e}")
+
 if __name__ == "__main__":
     df = crawl_all_movie_area_stats()
-    df.to_csv("movie_area_stats.csv", index=False, encoding="utf-8-sig")
-    print(df.head())
+    df = clean_and_convert(df)
+    save_to_db(df)
+    print("모든 데이터를 DB에 저장 완료!")
