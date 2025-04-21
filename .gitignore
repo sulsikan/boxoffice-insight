@@ -68,3 +68,7 @@ htmlcov/
 
 # ===== Git 자체 =====
 *.orig
+
+# SQLite
+db.sqlite3
+db.sqlite3-journal
