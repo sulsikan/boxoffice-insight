@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'international_boxoffice',
     'korean_boxoffice',
+    'movie_performance_summary',
 ]
 
 MIDDLEWARE = [
