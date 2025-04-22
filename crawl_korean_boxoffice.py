@@ -147,7 +147,6 @@ def crawl_korean_boxoffice(driver: webdriver.Chrome):
                 boxoffice.save()
             except Exception as e:
                 print(e)
-                print(traceback.format_exc())
                 print(row_data)
                 continue
 
