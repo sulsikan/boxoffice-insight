@@ -1,16 +1,23 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <div class="container mt-4">
-  <h2>지역별 한국/외국 영화 비율 분석</h2>
+  <h2>지역별 한국/외국 영화 분석</h2>
 
-  <form id="filterForm" class="row g-3 mt-3 mb-4">
-    <div class="col-md-3">
-      <label for="month" class="form-label">기준 시작월</label>
-      <select class="form-select" id="month" name="month"></select>
+  <!-- 필터링 폼: 연도 + 월 -->
+  <form id="filterForm" class="row g-3 mt-3 mb-4 justify-content-center">
+    <div class="col-md-4">
+      <label for="year" class="form-label">기준 연도</label>
+      <select class="form-select" id="year" name="year">
+        {% for y in years %}
+        <option value="{{ y }}" {% if y|stringformat:"s" == selected_year|stringformat:"s" %}selected{% endif %}>{{ y }}년</option>
+        {% endfor %}
+      </select>
     </div>
-    <div class="col-md-3">
-      <label for="region" class="form-label">지역</label>
-      <select class="form-select" id="region" name="region">
-        <option value="">전체</option>
+    <div class="col-md-4">
+      <label for="month" class="form-label">기준 월</label>
+      <select class="form-select" id="month" name="month">
+        {% for m in months %}
+        <option value="{{ m }}" {% if m|stringformat:"s" == selected_month|stringformat:"s" %}selected{% endif %}>{{ m }}월</option>
+        {% endfor %}
       </select>
     </div>
     <div class="col-md-2 align-self-end">
@@ -18,25 +25,47 @@
     </div>
   </form>
 
+  <!-- 지역별 점유율 차트 -->
   <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">지역별 한국/외국 영화 매출액 비교</h4>
+    </div>
     <div class="card-body">
       <div id="chart" style="width: 100%; height: 500px"></div>
     </div>
   </div>
 
+
+  <!-- 지역별 연간 추이 필터링 폼 -->
+  <form id="trendFilterForm" class="row g-3 mt-3 mb-4 justify-content-center">
+    <div class="col-md-4">
+      <label for="trendYear" class="form-label">연도</label>
+      <select class="form-select" id="trendYear" name="trendYear">
+        {% for y in years %}
+        <option value="{{ y }}" {% if y|stringformat:"s" == selected_trend_year|stringformat:"s" %}selected{% endif %}>{{ y }}년</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label for="trendRegion" class="form-label">지역</label>
+      <select class="form-select" id="trendRegion" name="trendRegion">
+        {% for r in regions %}
+        <option value="{{ r }}" {% if r == selected_region %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2 align-self-end">
+      <button type="submit" class="btn btn-primary w-100">조회</button>
+    </div>
+  </form>
+
+  <!-- 연도별 점유율 추이 차트 -->
   <div class="card">
-    <div class="card-body table-responsive">
-      <table class="table table-bordered" id="dataTable">
-        <thead>
-          <tr>
-            <th>지역</th>
-            <th>기준 시작일</th>
-            <th>한국 점유율 (%)</th>
-            <th>외국 점유율 (%)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">선택 지역의 월별 한국/외국 영화 점유율 추이</h4>
+    </div>
+    <div class="card-body">
+      <div id="trendChart" style="width: 100%; height: 500px"></div>
     </div>
   </div>
 </div>
@@ -44,82 +73,151 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // 필터 옵션 로딩
-    fetch("/api/regions_and_months/")
-      .then((res) => res.json())
-      .then((data) => {
-        const regionSelect = document.getElementById("region");
-        data.regions.forEach((r) => {
-          const opt = document.createElement("option");
-          opt.value = r;
-          opt.textContent = r;
-          regionSelect.appendChild(opt);
-        });
+    // 차트 데이터
+    const chartData = JSON.parse('{{ chart_data_json|escapejs }}');
+    let trendData = JSON.parse('{{ trend_data_json|escapejs }}');
+    
+    // 차트 레이아웃 설정
+    const barChartLayout = {
+      barmode: "group",
+      title: "",
+      xaxis: { title: "" },
+      yaxis: { 
+        title: "",
+        tickformat: ",.0f",
+        tickprefix: "₩",
+        hoverformat: ",.0f",
+        tickmode: "array",
+        ticktext: ["1억", "10억", "50억", "100억"],
+        tickvals: [100000000, 1000000000, 5000000000, 10000000000],
+      },
+      margin: { t: 30 },
+      showlegend: true,
+      legend: {
+        orientation: "h",
+        y: -0.2,
+        x: 0.5,
+        xanchor: "center",
+      },
+      autosize: true
+    };
+    
+    const lineChartLayout = {
+      title: "",
+      xaxis: { title: "" },
+      yaxis: { 
+        title: "",
+        tickformat: ".1f",
+        ticksuffix: "%",
+      },
+      margin: { t: 30 },
+      showlegend: true,
+      legend: {
+        orientation: "h",
+        y: -0.2,
+        x: 0.5,
+        xanchor: "center",
+      },
+      autosize: true
+    };
+    
+    // 지역별 점유율 차트
+    function drawChart() {
+      const data = [
+        {
+          x: chartData.region,
+          y: chartData.korean_sales,
+          name: "한국영화",
+          type: "bar",
+          marker: { color: "#3498DB" },
+          hovertemplate: "한국: ₩%{y:,.0f}<extra></extra>",
+        },
+        {
+          x: chartData.region,
+          y: chartData.foreign_sales,
+          name: "외국영화",
+          type: "bar",
+          marker: { color: "#E67E22" },
+          hovertemplate: "외국: ₩%{y:,.0f}<extra></extra>",
+        },
+      ];
 
-        const monthSelect = document.getElementById("month");
-        data.months.forEach((m) => {
-          const opt = document.createElement("option");
-          opt.value = m.value;
-          opt.textContent = m.label;
-          monthSelect.appendChild(opt);
-        });
-      });
+      Plotly.newPlot("chart", data, barChartLayout);
+    }
+    
+    // 연도별 점유율 추이 차트
+    function drawTrendChart() {
+      const data = [
+        {
+          x: trendData.months,
+          y: trendData.korean_ratio,
+          name: "한국영화",
+          type: "scatter",
+          mode: "lines+markers",
+          line: { color: "#3498DB" },
+          hovertemplate: "한국: %{y:.1f}%<extra></extra>",
+        },
+        {
+          x: trendData.months,
+          y: trendData.foreign_ratio,
+          name: "외국영화",
+          type: "scatter",
+          mode: "lines+markers",
+          line: { color: "#E67E22" },
+          hovertemplate: "외국: %{y:.1f}%<extra></extra>",
+        },
+      ];
 
+      Plotly.newPlot("trendChart", data, lineChartLayout);
+    }
+    
+    // AJAX로 추이 데이터 가져오기
+    function fetchTrendData() {
+      const trendYear = document.getElementById("trendYear").value;
+      const trendRegion = document.getElementById("trendRegion").value;
+      
+      document.getElementById("trendChart").style.opacity = "0.5";
+      
+      // AJAX 요청
+      fetch(`/regional_boxoffice/get_trend_data/?trendYear=${trendYear}&trendRegion=${encodeURIComponent(trendRegion)}`)
+        .then(response => response.json())
+        .then(data => {
+          trendData = data;
+          drawTrendChart();
+          document.getElementById("trendChart").style.opacity = "1";
+        })
+        .catch(error => {
+          console.error("데이터를 가져오는 중 오류가 발생했습니다:", error);
+          document.getElementById("trendChart").style.opacity = "1";
+        });
+    }
+    
+    // 필터 폼 이벤트
     document
       .getElementById("filterForm")
       .addEventListener("submit", function (e) {
         e.preventDefault();
-        const params = new URLSearchParams({
-          month: document.getElementById("month").value,
-          region: document.getElementById("region").value,
-        });
-        fetch(`/api/regional-ratio/?${params}`)
-          .then((res) => res.json())
-          .then((data) => {
-            updateChart(data.chart);
-            updateTable(data.table);
-          });
+        const params = new URLSearchParams(window.location.search);
+        params.set("year", document.getElementById("year").value);
+        params.set("month", document.getElementById("month").value);
+
+        window.location.href = `?${params.toString()}`;
+      });
+      
+    document
+      .getElementById("trendFilterForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        fetchTrendData();
       });
 
-    // 페이지 초기 로딩 시 자동 조회
-    document.getElementById("filterForm").dispatchEvent(new Event("submit"));
+    window.addEventListener('resize', function() {
+      Plotly.Plots.resize('chart');
+      Plotly.Plots.resize('trendChart');
+    });
 
-    function updateChart(data) {
-      const chartData = [
-        {
-          x: data.region,
-          y: data.korean_ratio,
-          name: "한국",
-          type: "bar",
-        },
-        {
-          x: data.region,
-          y: data.foreign_ratio,
-          name: "외국",
-          type: "bar",
-        },
-      ];
-
-      Plotly.newPlot("chart", chartData, {
-        barmode: "group",
-        title: "지역별 한국/외국 영화 비율",
-      });
-    }
-
-    function updateTable(data) {
-      const tbody = document.querySelector("#dataTable tbody");
-      tbody.innerHTML = "";
-      data.forEach((row) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-                <td>${row.region}</td>
-                <td>${row.date}</td>
-                <td>${row.korean_ratio}%</td>
-                <td>${row.foreign_ratio}%</td>
-            `;
-        tbody.appendChild(tr);
-      });
-    }
+    drawChart();
+    drawTrendChart();
   });
 </script>
 {% endblock %}
