@@ -33,7 +33,7 @@ def collect_data_for_month(year: int, month: int, crawler: InternationalBoxOffic
             logger.info(f"Processing {country} for {year}-{month:02d}")
             crawler.get_weekly_boxoffice(country, date)
             logger.info(f"Successfully collected data for {country} - {year}-{month:02d}")
-            time.sleep(3)  # 국가 간 전환 시 3초 대기
+            time.sleep(2)  # 국가 간 전환 시 2초 대기
         except Exception as e:
             logger.error(f"Failed to collect data for {country} - {year}-{month:02d}: {str(e)}")
             continue
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     
     try:
         # 2015년부터 2024년까지 데이터 수집
-        for year in range(2015, 2025):
+        for year in range(2014, 2025):
             for month in range(1, 13):
                 try:
                     collect_data_for_month(year, month, crawler)
