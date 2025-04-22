@@ -3,19 +3,22 @@ from django.db import models
 
 class Movie(models.Model):
     # id 자동생성
-    movie_id = models.IntegerField(unique=True, blank=False, null=False) # 중복입력방지용
+    movie_id = models.IntegerField(unique=True, blank=False, null=True) # 중복입력방지용
     movie_name = models.CharField(max_length=255)
     release_date = models.DateTimeField(null=True)
-    genre = models.CharField(max_length=255)
+    genre = models.CharField(max_length=255, null=True)
     is_now_showing = models.BooleanField(default=False)
-    nation = models.CharField(max_length=255)
-    movie_img = models.CharField(max_length=255)
+    nation = models.CharField(max_length=255,  null=True)
+    movie_img = models.CharField(max_length=255,  null=True)
+
+    def __str__(self):
+        return f'{self.movie_name}-{self.genre}'
 
 
 # Create your models here.
 class DailyBoxoffice(models.Model):
     # id 자동생성
-    movie_id = models.ForeignKey(Movie, related_name='korean_boxoffices', on_delete=models.CASCADE, null=True)
+    movie_id = models.ForeignKey(Movie, related_name='daily_boxoffices', on_delete=models.CASCADE, null=True)
     ranking_date_rank = models.CharField(unique=True, max_length=255, blank=False, null=False) # 중복입력방지용
     ranking_date = models.DateTimeField()
     rank = models.IntegerField()
@@ -30,3 +33,6 @@ class DailyBoxoffice(models.Model):
     moviegoers_cumulative = models.IntegerField()
     screens_num = models.IntegerField()
     screenings_num = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.ranking_date}-{self.rank}-{self.movie_name}-{self.revenue}'

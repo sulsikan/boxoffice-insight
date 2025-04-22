@@ -1,8 +1,5 @@
 from time import sleep
-
-from numpy.version import release
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -15,92 +12,86 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boxoffice.settings")
 import django
 
 django.setup()
-from korean_boxoffice.models import DailyBoxoffice
+from crawl_korean_boxoffice import select_day, to_datetime_KST
+
+from korean_boxoffice.models import Movie
 
 KST = timezone(timedelta(hours=+9))
-UTC = timezone.utc
 
 
-def to_ranking_date(string):
-    tokens = string.split()
-    year = tokens[0][:4]
-    month = tokens[1][:2]
-    day = tokens[2][:2]
+def crawl_movie(driver: webdriver.Chrome, visited_movie_names: set):
+    inclease = 1
+    for i, tbody in enumerate(driver.find_elements(By.TAG_NAME, 'tbody')):
+        if tbody.text.strip() == '':
+            break
 
-    return datetime(int(year), int(month), int(day), tzinfo=KST)
+        for a_tag in tbody.find_elements(By.TAG_NAME, 'a'):
+            movie_name = a_tag.text.strip()
+            if movie_name in visited_movie_names:
+                continue
 
+            visited_movie_names.add(movie_name)
+            a_tag.click()
+            sleep(2)
+            try:
+                is_now_showing = True if driver.find_element(By.XPATH,
+                                                             '/html/body/div[3]/div[1]/div[1]/div/span') else False
+            except:
+                # 여기서 timeout까지 기다리기 때문에 시간이 좀 걸립니다.
+                is_now_showing = False
 
-def to_datetime_KST(str_date):
-    try:
-        year, month, day = str_date.split('-')
-    except:
-        return None
-    return datetime(int(year), int(month), int(day), tzinfo=KST)
+            movie_infos = driver.find_element(By.XPATH,
+                                              f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/dl').find_elements(
+                By.TAG_NAME, 'dd')
+            movie_id = movie_infos[0].text.strip()
 
+            infos = movie_infos[3].text.strip().split('|')
+            genre = infos[2].strip()
+            nation = infos[5].strip()
 
-def str_replace_symbol(str_num):
-    if '\n' in str_num:
-        str_num = str_num.split('\n')[0]
+            release_date = movie_infos[5].text.strip()
 
-    return str_num.replace(',', '').replace('%', '')
+            img = driver.find_element(By.XPATH, f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/a/img')
+            img_src = img.get_attribute('src').strip()
 
+            release_date = to_datetime_KST(release_date) if release_date else None
 
-def str_to_int(str_int):
-    return int(str_replace_symbol(str_int))
+            movie_data = {
+                'movie_id': int(movie_id), # 중복 입력 방지용
+                'movie_name': movie_name,
+                'genre': genre,
+                'is_now_showing': is_now_showing,
+                'nation': nation,
+                'release_date': release_date,
+                'movie_img': img_src,
+            }
 
+            print(movie_data)
+            try:
+                Movie(**movie_data).save()
+            except Exception as e:
+                print(e)
+                pass
 
-def str_to_float(str_float):
-    return float(str_replace_symbol(str_float))
+            close_btn = driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[1]/a[2]/span')
+            close_btn.click()
+            sleep(3)
+            inclease += 2
 
-
-key_funcs = {
-    'movie_id': str_to_int,
-    'movie_name': None,
-    'release_date': to_datetime_KST,
-    'genre': None,
-    'is_now_showing' : None,
-    'nation': None,
-    'movie_img': None
-}
 
 if __name__ == '__main__':
     with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
         driver.get('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
         driver.implicitly_wait(20)
 
-        movie_names = set()
+        dt_start = datetime(2025, 1, 1, tzinfo=KST)
+        now = datetime.now(KST)
+        dt_end =datetime(now.year, now.month, now.day, tzinfo=KST)
 
-        inclease = 1
-        for i, tbody in enumerate(driver.find_elements(By.TAG_NAME, 'tbody')):
-            if tbody.text.strip() == '':
-                break
-
-            for a_tag in tbody.find_elements(By.TAG_NAME, 'a'):
-                movie_name = a_tag.text.strip()
-                if movie_name in movie_names:
-                    continue
-
-                movie_names.add(movie_name)
-
-                ActionChains(driver).click(a_tag).perform()
-                sleep(2)
-
-                try:
-                    is_now_showing= True if driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[1]/div/span').text else False
-                except:
-                    is_now_showing = False
-                movie_id = driver.find_element(By.XPATH, f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/dl/dd[1]').text.strip()
-                info=driver.find_element(By.XPATH, f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/dl/dd[4]').text.strip()
-                release_date = driver.find_element(By.XPATH, f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/dl/dd[6]').text.strip()
-                release_date =release_date if release_date else None
-                print(is_now_showing, movie_id, release_date, info)
-
-
-                close_btn = driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[1]/a[2]/span')
-                ActionChains(driver).click(close_btn).perform()
-                sleep(3)
-                inclease += 2
-
-
-
-            break
+        visited_movie_names = set()
+        dt = dt_start
+        while dt < dt_end:
+            print(dt)
+            select_day(driver, dt.year, dt.month, dt.day)
+            crawl_movie(driver, visited_movie_names)
+            dt += timedelta(days=7)
