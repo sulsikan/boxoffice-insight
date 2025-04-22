@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Korean Boxoffice</title>
-</head>
-<body>
-<h1>Korean Boxoffice</h1>
-{{ my_text }}
-<br>
-<a href="/korean_boxoffice/daily_boxoffice">Daily Boxoffice</a>
-<br>
-{{ target_date }}
-<a href="{%  url "korean_boxoffice:daily_boxoffice" target_date %}">Daily Boxoffice</a>
-{#<a href="/korean_boxoffice/daily_boxoffice/{{target_date}}}">Daily Boxoffice</a>#}
+{% extends 'base.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+    <h1>한국 박스 오피스</h1>
+    <h2><a href="{% url 'korean_boxoffice:daily_boxoffice' target_date  %}">일간 박스오피스</a></h2>
+    <h2><a href="{% url 'korean_boxoffice:daily_boxoffice' target_date  %}">주간 박스오피스</a></h2>
+    <h2><a href="{% url 'korean_boxoffice:daily_boxoffice' target_date  %}">월간 박스오피스</a></h2>
+
+{% endblock %}
