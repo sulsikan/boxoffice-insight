@@ -1,0 +1,114 @@
+<!-- filepath: /Users/sulsikan/Documents/programmers/PJT01/boxoffice-insight/movie_performance_summary/templates/movie_performance_summary/movie_performance_comparison.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Dashboard - SB Admin</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="index.html">영화 흥행 요약</a>
+        </nav>
+
+        <div class="container-fluid mt-4">
+            <p>이곳은 연도별 영화 점유율을 확인할 수 있는 페이지입니다.
+                각 연도마다 어떤 영화가 가장 흥행했는지 비교해보세요!</p>
+        </div>
+        
+        <!-- 검색창 -->
+        <div class="row mb-4">
+            <div class="col-md-8 offset-md-2 d-flex justify-content-center">
+                <form method="get" action="{% url 'movie_performance_comparison' %}" class="w-50">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="영화 제목 검색 ..." value="{{ search_query }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<div class="container mt-4">
+    <!-- 검색 결과 -->
+    {% if chart_data_by_year %}
+    <div class="row">
+        {% for year, chart_data in chart_data_by_year.items %}
+        <!-- 연도별 파이차트 -->
+        <div class="col-md-6 mb-4"> <!-- 2열로 배치 -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    {{ year }}년 영화 흥행 비교
+                </div>
+                <div class="card-body">
+                    <canvas id="myPieChart{{ year }}" width="100%" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+        {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            검색된 영화가 없습니다. 다시 검색해보세요.
+        </div>
+        {% endif %}
+        </div>
+    </body>
+</html>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 연도별로 파이차트 생성
+    const chartDataByYear = {{ chart_data_by_year|safe }};  // Django에서 전달된 데이터
+
+    Object.keys(chartDataByYear).forEach(year => {
+        const chartData = chartDataByYear[year];
+        const ctx = document.getElementById(`myPieChart${year}`).getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartData.labels,  // 영화 제목
+                datasets: [{
+                    data: chartData.data,  // 관객수
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40','#D9EDBF', '#FFB996', '#FF7F50', '#FFE4B5', '#FF69B4','#B0E0E6','#E6E6FA'
+                    ],  // 색상 배열
+                    hoverBackgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40','#D9EDBF', '#FFB996', '#FF7F50', '#FFE4B5', '#FF69B4','#B0E0E6','#E6E6FA'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw.toLocaleString() + '명';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

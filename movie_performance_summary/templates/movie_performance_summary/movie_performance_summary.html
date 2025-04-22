@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Dashboard - SB Admin</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="index.html">영화 흥행 요약</a>
+        </nav>
+
+        <div class="container-fluid mt-4">
+            <p>이곳은 영화의 성과 지표를 확인할 수 있는 페이지입니다.
+                관심 있는 영화를 클릭하면 해당 영화의 성적 그래프를 볼 수 있어요!</p>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0" method="get" action="">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="q" placeholder="영화 제목 검색..." aria-label="Search for..." aria-describedby="btnNavbarSearch" value="{{ query }}" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    국내 박스오피스 TOP 200
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>순위</th>
+                                    <th>영화 제목</th>
+                                    <th>개봉일</th>
+                                    <th>매출액</th>
+                                    <th>관객수</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movie in movies %}
+                                <tr>
+                                    <td>{{ movie.rank }}</td>
+                                    <td>
+                                        <a href="{% url 'movie_detail' movie.id %}">{{ movie.movie_name }}</a> <!-- 제목에 링크 추가 -->
+                                    </td>
+                                    <td>{{ movie.release_date }}</td>
+                                    <td>{{ movie.total_revenue|intcomma }}</td>
+                                    <td>{{ movie.total_moviegoers_num|intcomma }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4">
+                                        {% if query %}
+                                            "{{ query }}"에 대한 검색 결과가 없습니다.
+                                        {% else %}
+                                            데이터가 없습니다.
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>       
+
+        
+    </body>
+</html>
+{% endblock %}

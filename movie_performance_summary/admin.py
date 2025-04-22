@@ -3,7 +3,7 @@ from .models import Movie10days
 from .models import Movie
 
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ('movie_name', 'release_date', 'total_revenue', 'total_moviegoers_num')
+    list_display = ('rank', 'movie_name', 'release_date', 'total_revenue', 'total_moviegoers_num')
     search_fields = ['movie_name']
 
 admin.site.register(Movie, MovieAdmin)
