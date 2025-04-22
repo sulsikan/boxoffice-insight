@@ -32,6 +32,42 @@ kst: {{ target_ranking_date.year }} {{ target_ranking_date.month }} {{ target_ra
     </tbody>
 </table>
 
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+                {% for db in daily_boxoffices %}
+                    '{{ db.movie_name }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: '# of Votes',
+                data: [
+                    {% for db in daily_boxoffices %}
+                        {{ db.revenue_share }},
+                    {% endfor %}
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>

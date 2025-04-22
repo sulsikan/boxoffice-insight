@@ -5,11 +5,14 @@
     <title>Korean Boxoffice</title>
 </head>
 <body>
-    <h1>Korean Boxoffice</h1>
-    {{ my_text }}
-    <br>
-    <a href="/korean_boxoffice/daily_boxoffice/">Daily Boxoffice</a>
-    <br>
+<h1>Korean Boxoffice</h1>
+{{ my_text }}
+<br>
+<a href="/korean_boxoffice/daily_boxoffice">Daily Boxoffice</a>
+<br>
+{{ target_date }}
+<a href="{%  url "korean_boxoffice:daily_boxoffice" target_date %}">Daily Boxoffice</a>
+{#<a href="/korean_boxoffice/daily_boxoffice/{{target_date}}}">Daily Boxoffice</a>#}
 
 </body>
 </html>
