@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Django
+db.sqlite3
+
+# IDE 설정
+.idea/
+
+# 가상환경
+venv/
