@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from korean_boxoffice import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('graph/', views.graph_view, name='graph_view'),
+    path('movie_summary/', views.movie_summary, name='movie_summary'),
 ]

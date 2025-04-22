@@ -13,6 +13,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boxoffice.settings")
 django.setup()
 
 from korean_boxoffice.models import Movie10days
+
 def save_data_to_db(data_list):
     for item in data_list:
         try:
@@ -38,14 +39,14 @@ with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as drive
     movie_daily_data_list = []
     
     # 영화 제목 누르기
-    for i in range(200):
+    for i in range(199,200):
         try:
             button = driver.find_element(By.CSS_SELECTOR, f"#tr_{i} a")
             button.click()
 
         except Exception as e:
             print("영화 링크 클릭 실패:", e) 
-
+    
         # 모달 창 로딩 대기 (모달 div가 나타날 때까지 기다림)
         # WebDriverWait(driver, 10).until(
         #     EC.presence_of_element_located((By.CSS_SELECTOR, "div.ui-dialog"))
