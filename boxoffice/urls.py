@@ -25,4 +25,6 @@ urlpatterns = [
     path('international_boxoffice/', include('international_boxoffice.urls')),
     path('korean_boxoffice/', include('korean_boxoffice.urls')),
     path("genre/", include('genre_trend.urls')),
+    path('regional_cumulative_stats/', include('regional_cumulative_stats.urls')),
+    path('regional_boxoffice/', include('regional_boxoffice.urls')),
 ]

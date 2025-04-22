@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def regional_cumulative(request):
+    return render(request, 'regional_cumulative_stats/regional_cumulative.html')

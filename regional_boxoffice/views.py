@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def regional_boxoffice(request):
+    return render(request, 'regional_boxoffice/regional_boxoffice.html')
