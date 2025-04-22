@@ -70,7 +70,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // 국가 목록 로드
-    fetch('/api/countries/')
+    fetch('/international_boxoffice/api/countries/')
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             end_date: document.getElementById('endDate').value
         });
 
-        fetch(`/api/boxoffice/?${params}`)
+        fetch(`/international_boxoffice/api/boxoffice/?${params}`)
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
