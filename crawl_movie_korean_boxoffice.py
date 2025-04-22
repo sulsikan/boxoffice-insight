@@ -14,7 +14,7 @@ import django
 django.setup()
 from crawl_korean_boxoffice import select_day, to_datetime_KST
 
-from korean_boxoffice.models import Movie
+from korean_boxoffice.models import MovieInfo
 
 KST = timezone(timedelta(hours=+9))
 
@@ -68,7 +68,7 @@ def crawl_movie(driver: webdriver.Chrome, visited_movie_names: set):
 
             print(movie_data)
             try:
-                Movie(**movie_data).save()
+                MovieInfo(**movie_data).save()
             except Exception as e:
                 print(e)
                 pass

@@ -1,7 +1,8 @@
 from django.db import models
 
 
-class Movie(models.Model):
+class MovieInfo(models.Model):
+    # 박스오피스내 영화정보를 담는 테스트용 모델
     # id 자동생성
     movie_id = models.IntegerField(unique=True, blank=False, null=True) # 중복입력방지용
     movie_name = models.CharField(max_length=255)
@@ -18,7 +19,7 @@ class Movie(models.Model):
 # Create your models here.
 class DailyBoxoffice(models.Model):
     # id 자동생성
-    movie_id = models.ForeignKey(Movie, related_name='daily_boxoffices', on_delete=models.CASCADE, null=True)
+    movie_id = models.ForeignKey(MovieInfo, related_name='daily_boxoffices', on_delete=models.CASCADE, null=True)
     ranking_date_rank = models.CharField(unique=True, max_length=255, blank=False, null=False) # 중복입력방지용
     ranking_date = models.DateTimeField()
     rank = models.IntegerField()
