@@ -1,0 +1,134 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container-fluid mt-4">
+  <h2>지역별 박스오피스 분석</h2>
+
+  <!-- 🔍 검색창 -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <form id="searchForm" class="d-flex">
+        <input
+          type="text"
+          class="form-control me-2"
+          id="movieSearchInput"
+          placeholder="영화 제목을 입력하세요"
+        />
+        <button type="submit" class="btn btn-primary">검색</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- 🧭 지역 필터 -->
+    <div class="col-md-3">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">지역 선택</h5>
+          <select id="regionSelector" class="form-select">
+            <option value="">전체</option>
+            <option value="seoul">서울시</option>
+            <option value="gyeonggi">경기도</option>
+            <option value="busan">부산시</option>
+            <option value="daegu">대구시</option>
+            <option value="incheon">인천시</option>
+            <option value="gwangju">광주시</option>
+            <option value="daejeon">대전시</option>
+            <option value="ulsan">울산시</option>
+            <option value="sejong">세종시</option>
+            <option value="gangwon">강원도</option>
+            <option value="chungbuk">충청북도</option>
+            <option value="chungnam">충청남도</option>
+            <option value="jeonbuk">전라북도</option>
+            <option value="jeonnam">전라남도</option>
+            <option value="gyeongbuk">경상북도</option>
+            <option value="gyeongnam">경상남도</option>
+            <option value="jeju">제주도</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📊 파이차트 -->
+    <div class="col-md-9">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">지역별 매출점유율</h5>
+          <div id="pieChart" style="height: 400px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌩 워드클라우드 -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">지역별 매출 상위 영화</h5>
+          <div id="wordCloud" style="width: 100%; height: 500px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 🎯 영화 검색 이벤트
+    document
+      .getElementById("searchForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        const query = document.getElementById("movieSearchInput").value.trim();
+        if (query) {
+          fetch(`/api/movie_stats/?title=${encodeURIComponent(query)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              drawPieChart(data.pie_data);
+            });
+        }
+      });
+
+    // 🎯 지역 선택 이벤트
+    document
+      .getElementById("regionSelector")
+      .addEventListener("change", function () {
+        const region = this.value;
+        fetch(`/api/top_movies_by_region/?region=${region}`)
+          .then((res) => res.json())
+          .then((data) => {
+            drawWordCloud(data.wordcloud_data);
+          });
+      });
+
+    // 📊 파이차트 그리기
+    function drawPieChart(data) {
+      const layout = {
+        title: "한국 vs 외국 매출 비율",
+        height: 400,
+      };
+      Plotly.newPlot("pieChart", [data], layout);
+    }
+
+    // ☁️ 워드클라우드 그리기
+    function drawWordCloud(words) {
+      WordCloud(document.getElementById("wordCloud"), {
+        list: words.map((w) => [w.text, w.value]),
+        gridSize: 18,
+        weightFactor: 2,
+        fontFamily: "Segoe UI",
+        color: "#435ebe",
+        backgroundColor: "#fff",
+      });
+    }
+
+    // 최초 기본 호출
+    document.getElementById("searchForm").dispatchEvent(new Event("submit"));
+    document
+      .getElementById("regionSelector")
+      .dispatchEvent(new Event("change"));
+  });
+</script>
+{% endblock %}

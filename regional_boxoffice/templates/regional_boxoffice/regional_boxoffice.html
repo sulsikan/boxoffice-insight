@@ -1,0 +1,125 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4">
+  <h2>지역별 한국/외국 영화 비율 분석</h2>
+
+  <form id="filterForm" class="row g-3 mt-3 mb-4">
+    <div class="col-md-3">
+      <label for="month" class="form-label">기준 시작월</label>
+      <select class="form-select" id="month" name="month"></select>
+    </div>
+    <div class="col-md-3">
+      <label for="region" class="form-label">지역</label>
+      <select class="form-select" id="region" name="region">
+        <option value="">전체</option>
+      </select>
+    </div>
+    <div class="col-md-2 align-self-end">
+      <button type="submit" class="btn btn-primary w-100">조회</button>
+    </div>
+  </form>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div id="chart" style="width: 100%; height: 500px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body table-responsive">
+      <table class="table table-bordered" id="dataTable">
+        <thead>
+          <tr>
+            <th>지역</th>
+            <th>기준 시작일</th>
+            <th>한국 점유율 (%)</th>
+            <th>외국 점유율 (%)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 필터 옵션 로딩
+    fetch("/api/regions_and_months/")
+      .then((res) => res.json())
+      .then((data) => {
+        const regionSelect = document.getElementById("region");
+        data.regions.forEach((r) => {
+          const opt = document.createElement("option");
+          opt.value = r;
+          opt.textContent = r;
+          regionSelect.appendChild(opt);
+        });
+
+        const monthSelect = document.getElementById("month");
+        data.months.forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = m.value;
+          opt.textContent = m.label;
+          monthSelect.appendChild(opt);
+        });
+      });
+
+    document
+      .getElementById("filterForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        const params = new URLSearchParams({
+          month: document.getElementById("month").value,
+          region: document.getElementById("region").value,
+        });
+        fetch(`/api/regional-ratio/?${params}`)
+          .then((res) => res.json())
+          .then((data) => {
+            updateChart(data.chart);
+            updateTable(data.table);
+          });
+      });
+
+    // 페이지 초기 로딩 시 자동 조회
+    document.getElementById("filterForm").dispatchEvent(new Event("submit"));
+
+    function updateChart(data) {
+      const chartData = [
+        {
+          x: data.region,
+          y: data.korean_ratio,
+          name: "한국",
+          type: "bar",
+        },
+        {
+          x: data.region,
+          y: data.foreign_ratio,
+          name: "외국",
+          type: "bar",
+        },
+      ];
+
+      Plotly.newPlot("chart", chartData, {
+        barmode: "group",
+        title: "지역별 한국/외국 영화 비율",
+      });
+    }
+
+    function updateTable(data) {
+      const tbody = document.querySelector("#dataTable tbody");
+      tbody.innerHTML = "";
+      data.forEach((row) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+                <td>${row.region}</td>
+                <td>${row.date}</td>
+                <td>${row.korean_ratio}%</td>
+                <td>${row.foreign_ratio}%</td>
+            `;
+        tbody.appendChild(tr);
+      });
+    }
+  });
+</script>
+{% endblock %}
