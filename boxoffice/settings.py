@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'regional_boxoffice',
     'regional_cumulative_stats',
+    'genre_trend.apps.GenreTrendConfig',
     'international_boxoffice',
     'korean_boxoffice'
 ]
