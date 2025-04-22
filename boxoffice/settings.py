@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'genre_trend.apps.GenreTrendConfig',
     'international_boxoffice',
     'korean_boxoffice'
 ]
