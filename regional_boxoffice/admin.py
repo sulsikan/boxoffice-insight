@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from .models import RegionalBoxOffice
+from django.contrib import messages
 
 # 연도 필터
 class YearListFilter(admin.SimpleListFilter):
@@ -44,3 +45,8 @@ class RegionalBoxOfficeAdmin(admin.ModelAdmin):
     )
     search_fields = ("지역",)
     ordering = ("-기준_시작일", "지역")
+    
+    def changelist_view(self, request, extra_context=None):
+        count = RegionalBoxOffice.objects.count()
+        messages.info(request, f"총 {count:,}개의 지역별 점유율 데이터가 있습니다.")
+        return super().changelist_view(request, extra_context)
