@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Daily Boxoffice</title>
+    </head>
+    <body>
+    <h1>일간 박스 오피스</h1>
+    utc: {{ target_ranking_date }}
+    <br>
+    kst: {{ target_ranking_date.date }}
+    <br>
+    kst: {{ target_ranking_date.year }} {{ target_ranking_date.month }} {{ target_ranking_date.day }} {{ target_ranking_date.hour }}
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>순위</th>
+                <th>영화제목</th>
+                <th>매출액</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for db in daily_boxoffices %}
+                <tr>
+                    <td>{{ db.rank }}</td>
+                    <td>{{ db.movie_name }}</td>
+                    <td>{{ db.revenue }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    {% for db in daily_boxoffices %}
+                        '{{ db.movie_name }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [
+                        {% for db in daily_boxoffices %}
+                            {{ db.revenue_share }},
+                        {% endfor %}
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+{% endblock %}
+
+
+
+
+</body>
+</html>
