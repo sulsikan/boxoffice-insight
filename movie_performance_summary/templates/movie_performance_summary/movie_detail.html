@@ -16,7 +16,7 @@
             <h2 class="mb-0">{{ movie.movie_name }}</h2> <!-- 영화 제목 -->
         </div>
         <div class="card-body">
-            <p><strong>국내 박스오피스 순위:</strong> {{ movie.rank }}위</p>
+            <p><strong>국내 박스오피스 순위:</strong> {{ movie.rank }}</p>
             <p><strong>개봉일:</strong> {{ movie.release_date }}</p>
             <p><strong>누적 매출액:</strong> {{ movie.total_revenue|intcomma }} 원</p>
             <p><strong>누적 관객수:</strong> {{ movie.total_moviegoers_num|intcomma }} 명</p>
@@ -55,10 +55,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+
     // Chart.js 데이터
     const chartData = {{ chart_data|safe }};
 
-    // 꺾은 선 그래프 (누적 관객 수와 일일 관객 수)
+    // 꺾은 선 그래프 (누적 관객 수, 일일 관객 수) + 스크린 수 (오른쪽 y축)
     const ctxArea = document.getElementById('myAreaChart').getContext('2d');
     new Chart(ctxArea, {
         type: 'line',
@@ -75,6 +76,7 @@
                     pointHoverRadius: 7,
                     hoverRadius: 10,
                     pointBackgroundColor: '#328E6E',
+                    yAxisID: 'y', // 왼쪽 y축
                 },
                 {
                     label: '일일 관객 수',
@@ -86,6 +88,19 @@
                     pointHoverRadius: 7,
                     hoverRadius: 10,
                     pointBackgroundColor: '#67AE6E',
+                    yAxisID: 'y', // 왼쪽 y축
+                },
+                {
+                    label: '스크린 수',
+                    data: chartData.screen_count,
+                    borderColor: '#B0E0E6',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    hoverRadius: 10,
+                    pointBackgroundColor: '#B0E0E6',
+                    yAxisID: 'y1', // 오른쪽 y축
                 },
             ],
         },
@@ -95,24 +110,52 @@
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return context.raw.toFixed(2) + '만';
+                            if (context.dataset.label === '누적 관객 수' || context.dataset.label === '일일 관객 수') {
+                                return context.raw.toLocaleString() + '만';
+                            } else if (context.dataset.label === '스크린 수') {
+                                return context.raw.toLocaleString() + '개';
+                            }
                         }
                     }
                 }
             },
             scales: {
                 y: {
+                    min: 0, // 최소값
+                    max: 1000, // 최대값 (관객 수)
+                    title: {
+                        display: true,
+                        text: '관객 수',
+                    },
                     ticks: {
                         callback: function(value) {
-                            return value + '만'; // y축 레이블에 "만" 추가
+                            return value.toLocaleString() + '만';
                         }
-                    }
+                    },
+                    position: 'left', // 왼쪽 y축
+                },
+                y1: {
+                    min: 0, // 최소값
+                    max: 3000, // 최대값 (스크린 수)
+                    title: {
+                        display: true,
+                        text: '스크린 수',
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString() + '개'; // y축 레이블에 "개" 추가
+                        }
+                    },
+                    position: 'right', // 오른쪽 y축
+                    grid: {
+                        drawOnChartArea: false, // 왼쪽 y축과 겹치지 않도록 설정
+                    },
                 },
             },
         },
     });
 
-    // 막대 그래프 (누적 매출액) + 꺾은선 그래프 (스크린 수)
+    // 막대 그래프 (누적 매출액)
     const ctxBar = document.getElementById('myBarChart').getContext('2d');
     new Chart(ctxBar, {
         type: 'bar',
@@ -125,21 +168,19 @@
                     backgroundColor: 'rgba(255, 165, 0, 0.7)',
                     borderColor: 'orange',
                     borderWidth: 1,
-                    yAxisID: 'y', // 첫 번째 y축
-                    order: 2, // 막대 그래프의 그리기 순서를 뒤로 설정
+                    order: 2,
                 },
                 {
-                    label: '스크린 수',
-                    data: chartData.screen_count, // 스크린 수 데이터
+                    label: '일일 매출액',
+                    data: chartData.revenue,
                     type: 'line', // 꺾은선 그래프
-                    borderColor: '#007bff',
-                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderColor: '#FF7F50',
+                    backgroundColor: 'rgba(255, 165, 0, 0.3)',
                     fill: true,
                     pointRadius: 4,
                     pointHoverRadius: 7,
                     hoverRadius: 10,
-                    pointBackgroundColor: '#007bff',
-                    yAxisID: 'y1', // 두 번째 y축
+                    pointBackgroundColor: '#FF7F50',
                     order: 1, // 꺾은선 그래프의 그리기 순서를 앞으로 설정
                 },
             ],
@@ -150,41 +191,23 @@
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            if (context.dataset.label === '누적 매출액') {
-                                return context.raw.toFixed(2) + '억';
-                            } else if (context.dataset.label === '스크린 수') {
-                                return context.raw + '개';
-                            }
+                            return context.raw.toLocaleString() + '억';
                         }
                     }
                 }
             },
             scales: {
                 y: {
+                    min: 0, // 최소값
+                    max: 800, // 최대값
                     title: {
                         display: true,
                         text: '매출액 (억)',
                     },
                     ticks: {
                         callback: function(value) {
-                            return value + '억'; // y축 레이블에 "억" 추가
+                            return value.toLocaleString() + '억'; // y축 레이블에 "억" 추가
                         }
-                    },
-                    position: 'left', // 첫 번째 y축은 왼쪽
-                },
-                y1: {
-                    title: {
-                        display: true,
-                        text: '스크린 수',
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return value + '개'; // y축 레이블에 "개" 추가
-                        }
-                    },
-                    position: 'right', // 두 번째 y축은 오른쪽
-                    grid: {
-                        drawOnChartArea: false, // 첫 번째 y축과 겹치지 않도록 설정
                     },
                 },
             },

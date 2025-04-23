@@ -1,8 +1,11 @@
-# 임시로 사용되는 코드
-# crawl_info.py에서 rank 데이터가 제대로 안받아와지면 해당 코드로 따로 넣어주기 
+# crawl_info.py에서 rank 데이터가 제대로 안받아질 때만 사용되는 코드입니다.
+# 실행 방법 : 프로젝트 루트 폴더에서 python movie_performance_summary/crawl_rank.py
 import django
 import os
-
+import sys
+# Django 프로젝트 루트를 Python 경로에 추가
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Django 설정 불러오기
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boxoffice.settings")
 django.setup()
 

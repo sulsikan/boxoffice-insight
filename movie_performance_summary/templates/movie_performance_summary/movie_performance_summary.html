@@ -26,15 +26,19 @@
         <div class="container-fluid mt-4">
             <p>이곳은 영화의 성과 지표를 확인할 수 있는 페이지입니다.
                 관심 있는 영화를 클릭하면 해당 영화의 성적 그래프를 볼 수 있어요!</p>
-            <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0" method="get" action="">
-                <div class="input-group">
-                    <input class="form-control" type="text" name="q" placeholder="영화 제목 검색..." aria-label="Search for..." aria-describedby="btnNavbarSearch" value="{{ query }}" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
+            <!-- Navbar Search -->
+            <div class="row mb-4">
+                <div class="col-md-8 offset-md-2 d-flex justify-content-center">
+                    <form class="w-50" method="get" action="">
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="q" placeholder="영화 제목 검색..." aria-label="Search for..." aria-describedby="btnNavbarSearch" value="{{ query }}" />
+                            <button class="btn btn-primary" id="btnNavbarSearch" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
 
             <div class="card mb-4">
                 <div class="card-header">

@@ -1,3 +1,5 @@
+# 영화 연도별 시각화와 TOP 200 리스트를 위한 코드입니다.
+# 실행 방법 : 프로젝트 루트 폴더에서 python movie_performance_summary/crawl_info.py
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -5,12 +7,14 @@ from selenium.webdriver.common.by import By
 
 import django
 import os
-
+import sys
+# Django 프로젝트 루트를 Python 경로에 추가
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Django 설정 불러오기
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boxoffice.settings")
 django.setup()
 
-from .models import Movie
+from movie_performance_summary.models import Movie
 def save_data_to_db(data_list):
     for item in data_list:
         try:

@@ -16,41 +16,6 @@ from .models import Movie, Movie10days
 plt.rcParams['font.family'] = 'AppleGothic'  # MacOS의 기본 한글 폰트
 plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
 
-# "억" 단위로 변환하는 함수
-def format_revenue(x, pos):
-    return f"{x:.0f}억" if x >= 0 else ""  # 소수점 없이 정수로 표시
-
-# "만" 단위로 변환하는 함수
-def format_audience(x, pos):
-    return f"{x:.0f}만" if x >= 0 else ""  # 소수점 없이 정수로 표시
-
-def graph_view(request):
-    # 그래프 생성
-    font_path = '/Users/sulsikan/Documents/programmers/jupyter/실습파일_4/BMHANNAPro.ttf'  # 시스템에 맞는 경로로 변경 필요
-    font_prop = fm.FontProperties(fname=font_path)
-    plt.rcParams['font.family'] = font_prop.get_name()
-
-    # x축: days_since_release, y축: moviegoers_cumulative
-    x = [entry['days_since_release'] for entry in data]
-    y = [int(entry['moviegoers_cumulative'].replace(',', '')) for entry in data]
-
-    # 그래프 그리기
-    plt.figure(figsize=(10, 6))
-    plt.plot(x, y, marker='o', linestyle='-', color='blue', label='명량')
-    plt.title('누적 관객 수 변화')
-    plt.xlabel('개봉 경과일')
-    plt.ylabel('누적 관객 수')
-    plt.grid(True)
-    plt.legend()
-
-    # 이미지 파일로 저장 (메모리 버퍼에 저장)
-    buf = BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-
-    # HttpResponse를 이용해 이미지를 직접 응답으로 보냄
-    return HttpResponse(buf, content_type='image/png')
-
 def movie_performance_summary(request):
     query = request.GET.get('q', '')  # 'q' 파라미터로 검색어를 가져옴
     if query:
@@ -81,7 +46,7 @@ def movie_detail(request, movie_id):
     df["moviegoers_num"] = pd.to_numeric(df["moviegoers_num"], errors="coerce") / 10000  # 만 단위로 변환
     df["revenue_cumulative"] = pd.to_numeric(df["revenue_cumulative"], errors="coerce") / 100000000  # 억 단위로 변환
     df["screen_num"] = pd.to_numeric(df["screen_num"], errors="coerce")  # 스크린 수 데이터 추가
-
+    df["revenue"] = pd.to_numeric(df["revenue"], errors="coerce") / 100000000  # 억 단위로 변환
     # 개봉일 순서대로 정렬
     df = df.sort_values(by="release_day_number")
 
@@ -92,6 +57,7 @@ def movie_detail(request, movie_id):
         "moviegoers_num": df["moviegoers_num"].tolist(),  # 일일 관객 수
         "revenue_cumulative": df["revenue_cumulative"].tolist(),  # 누적 매출액
         "screen_count": df["screen_num"].tolist(),  # 스크린 수 데이터 추가
+        "revenue": df["revenue"].tolist(),  # 스크린당 매출액
     }
 
     return render(request, 'movie_performance_summary/movie_detail.html', {
