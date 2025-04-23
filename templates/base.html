@@ -158,6 +158,11 @@
                             영화별 국가 매출
                         </a>
                     </li>
+                    <li>
+                        <a href="{% url 'genre_analysis' %}" class="{% if 'genre-analysis' in request.path %}active{% endif %}">
+                            국가별 장르 분석
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li>
