@@ -15,6 +15,8 @@
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -48,13 +50,13 @@
         {% for year, chart_data in chart_data_by_year.items %}
         <!-- 연도별 파이차트 -->
         <div class="col-md-6 mb-4"> <!-- 2열로 배치 -->
-            <div class="card">
+            <div class="card" style="height: 500px;"> <!-- 카드 높이 조정 -->
                 <div class="card-header">
                     <i class="fas fa-chart-pie me-1"></i>
                     {{ year }}년 영화 흥행 비교
                 </div>
-                <div class="card-body">
-                    <canvas id="myPieChart{{ year }}" width="100%" height="50"></canvas>
+                <div class="card-body" style="display: flex; justify-content: center; align-items: center; padding: 0;">
+                    <canvas id="myPieChart{{ year }}"></canvas> <!-- 크기를 500x500으로 설정 -->
                 </div>
             </div>
         </div>
@@ -70,8 +72,6 @@
     </body>
 </html>
 
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // 연도별로 파이차트 생성
     const chartDataByYear = {{ chart_data_by_year|safe }};  // Django에서 전달된 데이터
@@ -86,11 +86,26 @@
                 datasets: [{
                     data: chartData.data,  // 관객수
                     backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40','#D9EDBF', '#FFB996', '#FF7F50', '#FFE4B5', '#FF69B4','#B0E0E6','#E6E6FA'
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFB996', '#FF7F50', '#FF69B4','#B0E0E6','#E6E6FA'
                     ],  // 색상 배열
                     hoverBackgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40','#D9EDBF', '#FFB996', '#FF7F50', '#FFE4B5', '#FF69B4','#B0E0E6','#E6E6FA'
-                    ]
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFB996', '#FF7F50', '#FF69B4','#B0E0E6','#E6E6FA'
+                    ],
+                    borderColor: chartData.labels.map(label => {
+                        const searchQuery = "{{ search_query|escapejs }}"; // 검색어 가져오기
+                        if (searchQuery && label.includes(searchQuery)) {
+                            return '#C1C1C1'; // 검색어와 일치하면 테두리를 회색으로 설정
+                        }
+                        return '#FFFFFF'; // 기본 테두리 색상 (흰색)
+                    }),
+                    borderWidth: chartData.labels.map(label => {
+                        const searchQuery = "{{ search_query|escapejs }}"; // 검색어 가져오기
+                        if (searchQuery && label.includes(searchQuery)) {
+                            return 5; // 검색어와 일치하면 테두리 두께를 3px로 설정
+                        }
+                        return 1; // 기본 테두리 두께
+                    }),
+                    hoverOffset: 15 // 마우스를 올렸을 때 조각이 커지는 정도 (픽셀 단위)
                 }]
             },
             options: {
@@ -105,9 +120,61 @@
                                 return context.label + ': ' + context.raw.toLocaleString() + '명';
                             }
                         }
-                    }
+                    },
+                    datalabels: {
+                        color: function(context) {
+                            const label = context.chart.data.labels[context.dataIndex]; // 영화 제목
+                            const searchQuery = "{{ search_query|escapejs }}"; // 검색어 가져오기
+                            if (searchQuery && label.includes(searchQuery)) {
+                                return '#000'; // 검색어와 일치하면 글씨를 검은색으로
+                            }
+                            return '#fff'; // 기본 글씨 색상
+                        },
+                        font: {
+                            weight: 'bold',
+                        },
+                        align: 'end', // 라벨 정렬을 바깥쪽으로 설정
+                        offset: 5, 
+                        formatter: function(value, context) {
+                            const total = context.chart.data.datasets[0].data.reduce((sum, val) => sum + val, 0); // 총합 계산
+                            const percentage = (value / total) * 100; // 비율 계산
+                            const label = context.chart.data.labels[context.dataIndex]; // 영화 제목
+
+                            // 조건: 비율이 5% 미만 라벨 숨김
+                            if (percentage < 6) {
+                                return '';  // 빈 문자열 반환
+                            }
+                            if ((percentage < 10 && label.length > 8) || (percentage < 10 && label.length > 8)) {
+                                return '';  // 빈 문자열 반환
+                            }
+                            if (label.length > 5) {
+                                // 공백 기준으로 줄바꿈
+                                const maxLineLength = 6; // 한 줄에 표시할 최대 글자 수
+                                const words = label.split(/[\s\-:]/); // 공백(' '), '-', ':' 기준으로 단어 분리
+                                let lines = [];
+                                let currentLine = '';
+
+                                words.forEach(word => {
+                                    if ((currentLine + word).length > maxLineLength) {
+                                        lines.push(currentLine.trim());
+                                        currentLine = word + ' ';
+                                    } else {
+                                        currentLine += word + ' ';
+                                    }
+                                });
+
+                                if (currentLine) {
+                                    lines.push(currentLine.trim());
+                                }
+
+                                return lines.join('\n'); // 줄바꿈된 텍스트 반환
+                            }
+                            return label;  // 영화 제목 표시
+                        }
+                    },
                 }
-            }
+            },
+            plugins: [ChartDataLabels]  // datalabels 플러그인 활성화
         });
     });
 </script>
