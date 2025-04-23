@@ -2,52 +2,68 @@
 {% load static %}
 
 {% block content %}
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Daily Boxoffice</title>
-    </head>
-    <body>
-    <h1>일간 박스 오피스</h1>
-    utc: {{ target_ranking_date }}
-    <br>
-    kst: {{ target_ranking_date.date }}
-    <br>
-    kst: {{ target_ranking_date.year }} {{ target_ranking_date.month }} {{ target_ranking_date.day }} {{ target_ranking_date.hour }}
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th>순위</th>
-                <th>영화제목</th>
-                <th>매출액</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for db in daily_boxoffices %}
-                <tr>
-                    <td>{{ db.rank }}</td>
-                    <td>{{ db.movie_name }}</td>
-                    <td>{{ db.revenue }}</td>
-                </tr>
-            {% endfor %}
+    <div class="container-fluid mt-4">
+        <div class="card-body">
+            <h1>일간 박스 오피스
+                : {{ target_dt.year }}년 {{ target_dt.month }}월 {{ target_dt.day }}일</h1>
+            <div >
+                <form id="filterForm">
 
-            </tbody>
-        </table>
+                    <div class="mb-3">
+                        <label for="target_date" class="form-label">조회일</label>
+                        <input type="date" class="form-control" id="target_date" name="target_date"
+                               value="{{ target_date }}"
+                               min="2025-01-01" max="2025-04-30">
+                    </div>
+                    <button type="submit" class="btn btn-primary">조회</button>
+                </form>
+            </div>
+
+            <div>
+                <table class="table" id="dataTable">
+                    <thead>
+                    <tr>
+                        <th>순위</th>
+                        <th>영화제목</th>
+                        <th>일간 매출액</th>
+                        <th>매출액 점유율</th>
+                        <th>관객수</th>
+                        <th>스크린수</th>
+                        <th>상영수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for db in daily_boxoffices %}
+                        <tr>
+                            <td style="text-align:right">{{ db.rank }}</td>
+                            <td><a href="{% url 'korean_boxoffice:movie_info' db.movie_id_id %}">{{ db.movie_name }}</a></td>
+                            <td style="text-align:right">{{ db.revenue }}원</td>
+                            <td style="text-align:right">{{ db.revenue_share }}%</td>
+                            <td style="text-align:right">{{ db.moviegoers_num }}</td>
+                            <td style="text-align:right">{{ db.screens_num }}</td>
+                            <td style="text-align:right">{{ db.screenings_num }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
 
     </div>
-
-
-    <div>
-        <canvas id="myChart"></canvas>
-    </div>
-
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx = document.getElementById('myChart');
-
+        Chart.defaults.set('plugins.datalabels', {
+            color: 'black'
+        })
         new Chart(ctx, {
             type: 'pie',
             data: {
@@ -55,13 +71,19 @@
                     {% for db in daily_boxoffices %}
                         '{{ db.movie_name }}',
                     {% endfor %}
+                    {% if daily_boxoffices %}
+                        '기타 영화'
+                    {% endif %}
                 ],
                 datasets: [{
-                    label: '# of Votes',
+                    label: '매출액 점유율(%)',
                     data: [
                         {% for db in daily_boxoffices %}
                             {{ db.revenue_share }},
                         {% endfor %}
+                        {% if daily_boxoffices %}
+                            {{ etc_share }}
+                        {% endif %}
                     ],
                     borderWidth: 1
                 }]
@@ -71,15 +93,18 @@
                     y: {
                         beginAtZero: true
                     }
+                },
+
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right'
+                    },
+
                 }
+
             }
         });
     </script>
 
 {% endblock %}
-
-
-
-
-</body>
-</html>
