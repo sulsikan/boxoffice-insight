@@ -4,16 +4,22 @@
 {% block content %}
     <div class="container-fluid mt-4">
         <div class="card-body">
-            <h1>일간 박스 오피스
-                : {{ target_dt.year }}년 {{ target_dt.month }}월 {{ target_dt.day }}일</h1>
+            <h1>연간 박스 오피스
+                : {{ target_dt.year }}년</h1>
             <div>
                 <form id="filterForm">
-
                     <div class="mb-3">
-                        <label for="target_date" class="form-label">조회일</label>
-                        <input type="date" class="form-control" id="target_date" name="target_date"
-                               value="{{ target_date }}"
-                               min="2025-01-01" max="2025-04-30">
+                        <label for="month" class="form-label">조회 년</label>
+                        <select class="form-select" id="target_date" name="target_date">
+                            <option value="{{ target_date }}">
+                                {{ target_date }}
+                            </option>
+                            {% for sd in select_dates %}
+                                <option value="{{ sd }}">
+                                    {{ sd }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">조회</button>
                 </form>
@@ -36,11 +42,13 @@
                     {% for bo in boxoffices %}
                         <tr>
                             <td style="text-align:right">{{ bo.rank }}</td>
-                            {% if bo.movie_id_id   %}
-                            <td><a href="{% url 'korean_boxoffice:movie_info' bo.movie_id_id %}">{{ bo.movie_name }}</a>
-                            </td>
-                            {%  else %}
-                            <td>{{ bo.movie_name }}</td>
+                            {% if bo.movie_id_id %}
+                                <td>
+                                    <a href="{% url 'korean_boxoffice:movie_info' bo.movie_id_id %}">{{ bo.movie_name }}</a>
+                                </td>
+
+                            {% else %}
+                                <td>{{ bo.movie_name }}</td>
                             {% endif %}
 
                             <td style="text-align:right">{{ bo.revenue }}원</td>
@@ -64,7 +72,6 @@
         </div>
 
     </div>
-
 
 {% endblock %}
 {% block extra_js %}
@@ -119,10 +126,9 @@
                             var idx = context.dataIndex; // 각 데이터 인덱스
 
                             // 출력 텍스트
-                            if (value > 5){
-                                return context.chart.data.labels[idx] +' '+ value + '%';
-                            }
-                            else{
+                            if (value > 5) {
+                                return context.chart.data.labels[idx] + ' ' + value + '%';
+                            } else {
                                 return ''
                             }
                         },

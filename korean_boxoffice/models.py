@@ -37,3 +37,41 @@ class DailyBoxoffice(models.Model):
 
     def __str__(self):
         return f'{self.ranking_date}-{self.rank}-{self.movie_name}-{self.revenue}'
+
+
+class MonthlyBoxoffice(models.Model):
+    # id 자동생성
+    movie_id = models.ForeignKey(MovieInfo, related_name='monthly_boxoffices', on_delete=models.CASCADE, null=True)
+    ranking_date_rank = models.CharField(unique=True, max_length=255, blank=False, null=False)  # 중복입력방지용
+    ranking_date = models.CharField()
+    rank = models.IntegerField()
+    movie_name = models.CharField(max_length=255)
+    revenue = models.IntegerField()
+    release_date = models.DateTimeField(null=True)
+    revenue_share = models.FloatField()
+    revenue_cumulative = models.IntegerField()
+    moviegoers_num = models.IntegerField()
+    moviegoers_cumulative = models.IntegerField()
+    screens_num = models.IntegerField()
+    screenings_num = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.ranking_date}-{self.rank}-{self.movie_name}-{self.revenue}'
+
+
+class AnnualBoxoffice(models.Model):
+    # id 자동생성
+    movie_id = models.ForeignKey(MovieInfo, related_name='annual_boxoffices', on_delete=models.CASCADE, null=True)
+    ranking_date_rank = models.CharField(unique=True, max_length=255, blank=False, null=False)  # 중복입력방지용
+    ranking_date = models.CharField()
+    rank = models.IntegerField()
+    movie_name = models.CharField(max_length=255)
+    revenue = models.IntegerField()
+    release_date = models.DateTimeField(null=True)
+    revenue_share = models.FloatField()
+    moviegoers_num = models.IntegerField()
+    screens_num = models.IntegerField()
+    screenings_num = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.ranking_date}-{self.rank}-{self.movie_name}-{self.revenue}'

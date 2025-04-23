@@ -3,7 +3,6 @@ from time import sleep
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
@@ -13,7 +12,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 
 import os
+import sys
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, BASE_DIR)
 TIMEOUT = 20  # 20초
 logger = logging.getLogger(__name__)
 
@@ -206,9 +208,16 @@ def crawl_movie_info(driver: webdriver.Chrome, visited_movie_names: set):
                 print(e)
                 print(movie_data)
 
-            close_btn = driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[1]/a[2]/span')
-            close_btn.click()
-            sleep(1)
+            # close_btn = driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[1]/a[2]/span')
+            # close_btn.click()
+            # sleep(1)
+
+            # 상세페이지 닫기
+            driver.find_element(By.XPATH, "//a[contains(@onclick, 'dtlRmAll')]").click()
+            WebDriverWait(driver, 10).until_not(
+                EC.presence_of_element_located((By.CLASS_NAME, "layer_popup"))
+            )
+
             inclease += 2
 
 
@@ -224,25 +233,26 @@ def make_daily_boxoffice_fk():
         daily_boxoffice.save()
 
 
-def crawl(url: str):
+def crawl(start_year, start_month, start_day):
     with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
-        driver.get(url)
+        driver.get('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
         driver.implicitly_wait(TIMEOUT)
-        dt_start = datetime(2025, 1, 1, tzinfo=KST)
+        dt_start = datetime(start_year, start_month, start_day, tzinfo=KST)
         dt_now = datetime.now(KST)
         dt_yesterday = datetime(dt_now.year, dt_now.month, dt_now.day, tzinfo=KST) - timedelta(days=1)
 
-        visited_movie_names = set()
+        movie_name_set = set(MovieInfo.objects.all().values_list('movie_name', flat=True))
+
         dt = dt_start
         while dt <= dt_yesterday:
             print(dt)
             select_day(driver, dt.year, dt.month, dt.day)
             crawl_daily_boxoffice(driver)
-            crawl_movie_info(driver, visited_movie_names)
+            crawl_movie_info(driver, movie_name_set)
             dt += timedelta(days=7)
 
         make_daily_boxoffice_fk()
 
 
 if __name__ == '__main__':
-    crawl('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
+    crawl(2025, 1, 1)

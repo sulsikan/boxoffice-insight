@@ -140,7 +140,7 @@
         </div>
         <ul class="nav-links">
             <li>
-                <a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">
+                <a href="{% url 'korean_boxoffice:monthly_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
                     <i class='bx bx-grid-alt'></i>
                     <span class="link_name">대시보드</span>
                 </a>
@@ -172,10 +172,31 @@
                 </ul>
             </li>
             <li>
-                <a href="{% url 'korean_boxoffice:index' %}" class="{% if 'joseunghyeon' in request.path %}active{% endif %}">
+                <div class="dropdown-btn">
+
+                <a href="{% url 'korean_boxoffice:index' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
                     <i class='bx bx-bar-chart-alt-2'></i>
                     <span class="link_name">한국 박스오피스</span>
+                    <i class='bx bx-chevron-down arrow'></i>
                 </a>
+                </div>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="{% url 'korean_boxoffice:daily_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
+                            일간 박스 오피스
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'korean_boxoffice:monthly_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
+                            월간 박스 오피스
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'korean_boxoffice:annual_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
+                            연간 박스 오피스
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li>
                 <a href="#" class="{% if 'ojueon' in request.path %}active{% endif %}">
