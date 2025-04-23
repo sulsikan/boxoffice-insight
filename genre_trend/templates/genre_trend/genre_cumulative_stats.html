@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Office Insights</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Boxicons CSS -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Custom CSS -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <style>
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background: #11101d;
+            z-index: 100;
+            transition: all 0.5s ease;
+            padding-top: 20px;
+        }
+
+        .sidebar .logo-details {
+            height: 60px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .sidebar .logo-details i {
+            font-size: 28px;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .sidebar .logo-details .logo_name {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-links {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .sidebar .nav-links li {
+            position: relative;
+            list-style: none;
+        }
+
+        .sidebar .nav-links li a {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 0 20px;
+            transition: all 0.4s ease;
+        }
+
+        .sidebar .nav-links li a:hover,
+        .sidebar .nav-links li a.active {
+            background: #1d1b31;
+        }
+
+        .sidebar .nav-links li i {
+            min-width: 30px;
+            text-align: center;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .sidebar .nav-links li a .link_name {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-btn {
+            width: 100%;
+        }
+
+        .dropdown-btn a {
+            position: relative;
+        }
+
+        .arrow {
+            position: absolute;
+            right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .sub-menu {
+            display: none;
+            list-style: none;
+            padding-left: 0;
+            background: #1d1b31;
+        }
+
+        .sub-menu li a {
+            padding-left: 40px;
+            font-size: 14px;
+        }
+
+        .sub-menu.show {
+            display: block;
+        }
+
+        .arrow.rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<body>
+<!-- Main Content -->
+<!--장르 누적 통계 분석-->
+<div class="main-content">
+    <h2 style="text-align:center;">장르별 누적 통계</h2>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 결과 표시 -->
+    <div class="mb-4">
+        <label for="genreSelect" class="form-label">장르 선택:</label>
+        <select id="genreSelect" class="form-select" onchange="updateStats()">
+            {% for genre in labels %}
+            <option value="{{ forloop.counter0 }}">{{ genre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="row g-4">
+        <!-- 매출액 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">💰 매출액</h5>
+                    <h3 class="text-primary" id="salesStat">-</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- 관객수 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">👥 관객수</h5>
+                    <h3 class="text-primary" id="audienceStat">-</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- 스크린 수 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">📽️ 스크린 수</h5>
+                    <h3 class="text-primary" id="screensStat">-</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- 개봉 편수 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🎞️ 개봉 편수</h5>
+                    <h3 class="text-primary" id="countsStat">-</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 차트 영역 -->
+<div class="main-content">
+    <h2 class="text-center mb-4">장르별 누적 통계 차트</h2>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">매출액</h5>
+                    <canvas id="donutSales"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">관객수</h5>
+                    <canvas id="donutAudience"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">스크린 수</h5>
+                    <canvas id="donutScreens"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">개봉 편수</h5>
+                    <canvas id="donutCounts"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--결과 검색 에쁘게 스크립트-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownBtn = document.querySelector('.dropdown-btn');
+        const arrow = dropdownBtn.querySelector('.arrow');
+        const subMenu = dropdownBtn.nextElementSibling;
+
+        // URL에 'international'이 포함되어 있으면 서브메뉴를 자동으로 펼침
+        if
+            (window.location.pathname.includes('genre')
+        ) {
+            subMenu.classList.add('show');
+            arrow.classList.add('rotate');
+        }
+
+        dropdownBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            subMenu.classList.toggle('show');
+            arrow.classList.toggle('rotate');
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--검색 -->
+<script>
+const labels = {{ labels|safe }};
+const sales = {{ sales|safe }};
+const audience = {{ audience|safe }};
+const screens = {{ screens|safe }};
+const movieCounts = {{ movie_counts|safe }};
+
+// 드롭다운에서 장르 선택 시 정보 카드 업데이트
+function updateStats() {
+  const idx = document.getElementById("genreSelect").value;
+  document.getElementById("salesStat").textContent = sales[idx].toLocaleString() + " 원";
+  document.getElementById("audienceStat").textContent = audience[idx].toLocaleString() + " 명";
+  document.getElementById("screensStat").textContent = screens[idx].toLocaleString() + " 개";
+  document.getElementById("countsStat").textContent = movieCounts[idx].toLocaleString() + " 편";
+}
+</script>
+<!-- 차트 그리는 스크립트 -->
+<script>
+    function drawDonutChart(id, labels, data, title) {
+      new Chart(document.getElementById(id).getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: title,
+            data: data,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(153, 102, 255, 0.6)',
+              'rgba(255, 159, 64, 0.6)',
+              'rgba(201, 203, 207, 0.6)',
+              'rgba(60, 179, 113, 0.6)',
+              'rgba(240, 128, 128, 0.6)',
+              'rgba(123, 104, 238, 0.6)',
+              'rgba(180, 180, 180, 0.6)' // 기타 포함 예상
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: title
+            }
+          }
+        }
+      });
+    }
+
+    window.onload = () => {
+      drawDonutChart('donutSales', {{ labels|safe }}, {{ sales|safe }}, '장르별 매출액');
+      drawDonutChart('donutAudience', {{ labels|safe }}, {{ audience|safe }}, '장르별 관객수');
+      drawDonutChart('donutScreens', {{ labels|safe }}, {{ screens|safe }}, '장르별 스크린 수');
+      drawDonutChart('donutCounts', {{ labels|safe }}, {{ movie_counts|safe }}, '장르별 개봉 편수');
+    };
+    updateStats();  // 초기 상태에서 정보 카드 표시
+</script>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+        crossorigin="anonymous"></script>
+<script src="js/datatables-simple-demo.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
+{% endblock %}

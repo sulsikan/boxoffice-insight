@@ -231,11 +231,26 @@
                 </a>
             </li> {% endcomment %}
             <li>
-                <a href="#" class="{% if 'yuyeonjun' in request.path %}active{% endif %}">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">유연준</span>
-                </a>
-            </li>
+                <div class="dropdown-btn">
+                  <a href="#" class="{% if 'genre' in request.path %}active{% endif %}">
+                    <i class="bx bx-bar-chart-alt-2"></i>
+                    <span class="link_name">장르별 분석</span>
+                    <i class="bx bx-chevron-down arrow"></i>
+                  </a>
+                </div>
+                <ul class="sub-menu">
+                  <li>
+                    <a href="{% url 'genre_cumulative_stats' %}" class="{% if 'genre_cumulative_stats' in request.path %}active{% endif %}" style="color: #ccc;">
+                      장르별 누적 통계 분석
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'genre_yearly_trends' %}" class="{% if 'genre_yearly_trends' in request.path %}active{% endif %}" style="color: #ccc;">
+                      연도별 장르 트렌드
+                    </a>
+                  </li>
+                </ul>
+              </li>
             <li>
                 <div class="dropdown-btn">
                   <a href="#" class="{% if 'regional' in request.path %}active{% endif %}">
@@ -252,7 +267,11 @@
                   </li>
                   <li>
                     <a href="{% url 'regional_boxoffice' %}" class="{% if 'regional_boxoffice' in request.path %}active{% endif %}" style="color: #ccc;">
+<<<<<<< HEAD
                     지역별 한국/외국영화 분석
+=======
+                      지역별 한국/외국 영화분석
+>>>>>>> yeanjun
                     </a>
                   </li>
                 </ul>
@@ -276,14 +295,14 @@
           dropdowns.forEach(btn => {
             const arrow = btn.querySelector('.arrow');
             const subMenu = btn.nextElementSibling;
-      
+
             // 자동 펼침 조건
             const path = window.location.pathname;
             if (path.includes('international') || path.includes('regional')) {
               subMenu.classList.add('show');
               arrow.classList.add('rotate');
             }
-      
+
             btn.addEventListener('click', function(e) {
               e.preventDefault();
               subMenu.classList.toggle('show');
@@ -291,7 +310,7 @@
             });
           });
         });
-      </script>      
+      </script>
     {% block extra_js %}{% endblock %}
 </body>
-</html> 
+</html>
