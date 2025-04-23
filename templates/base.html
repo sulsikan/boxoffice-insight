@@ -204,22 +204,25 @@
                 </ul>
             </li>
             <li>
-                <a href="#" class="d-flex align-items-center text-white" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">영화 흥행 요약</span>
-                    <div class="sb-sidenav-collapse-arrow ms-auto">
-                    </div>
-                </a>
-                <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                    <nav class="sb-sidenav-menu-nested nav"> <!-- 하위 메뉴 오른쪽으로 한 칸 더 이동 -->
-                        <a href="{% url 'movie_performance_summary' %}" class="nav-link {% if 'movie_performance_summary' in request.path %}active{% endif %}">
-                            <span class="link_name ms-5">국내 TOP 200 성과</span>
-                        </a>
-                        <a href="{% url 'movie_performance_comparison' %}" class="{% if 'movie_performance_comparison' in request.path %}active{% endif %}">
-                            <span class="link_name ms-5">영화 성과 비교</span>
-                        </a>
-                    </nav>
+                <div class="dropdown-btn">
+                    <a href="#" class="{% if 'movie_performance' in request.path %}active{% endif %}">
+                        <i class='bx bx-bar-chart-alt-2'></i>
+                        <span class="link_name">영화 흥행 요약</span>
+                        <i class='bx bx-chevron-down arrow'></i>
+                    </a>
                 </div>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="{% url 'movie_performance_summary' %}" class="{% if 'movie_performance_summary' in request.path %}active{% endif %}">
+                            국내 TOP 200 성과
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'movie_performance_comparison' %}" class="{% if 'movie_performance_comparison' in request.path %}active{% endif %}">
+                            영화 성과 비교
+                        </a>
+                    </li>
+                </ul>
             </li>
             {% comment %} <li>
                 <a href="{% url 'movie_performance_summary' %}" class="{% if 'movie_performance_summary' in request.path %}active{% endif %}">
