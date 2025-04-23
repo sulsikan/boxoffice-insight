@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- 지역별 점유율 차트 -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">지역별 한국/외국 영화 매출액 비교</h4>
+    </div>
+    <div class="card-body">
+      <form id="filterForm" class="row g-3 mb-4 justify-content-center">
+        <div class="col-md-4">
+          <label for="year" class="form-label">기준 연도</label>
+          <select class="form-select  text-center" id="year" name="year">
+            {% for y in years %}
+            <option value="{{ y }}" {% if y|stringformat:"s" == selected_year|stringformat:"s" %}selected{% endif %}>{{ y }}년</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="month" class="form-label">기준 월</label>
+          <select class="form-select  text-center" id="month" name="month">
+            {% for m in months %}
+            <option value="{{ m }}" {% if m|stringformat:"s" == selected_month|stringformat:"s" %}selected{% endif %}>{{ m }}월</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+          <button type="submit" class="btn btn-primary w-100">조회</button>
+        </div>
+      </form>
+
+      <div id="chart" style="width: 100%; height: 500px;"></div>
+    </div>
+  </div>
+
+  <!-- 지역별 연간 추이 차트 -->
+  <div class="card">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">선택 지역의 월별 한국/외국 영화 점유율 추이</h4>
+    </div>
+    <div class="card-body">
+      <form id="trendFilterForm" class="row g-3 mb-4 justify-content-center">
+        <div class="col-md-4">
+          <label for="trendYear" class="form-label">연도</label>
+          <select class="form-select  text-center" id="trendYear" name="trendYear">
+            {% for y in years %}
+            <option value="{{ y }}" {% if y|stringformat:"s" == selected_trend_year|stringformat:"s" %}selected{% endif %}>{{ y }}년</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="trendRegion" class="form-label">지역</label>
+          <select class="form-select  text-center" id="trendRegion" name="trendRegion">
+            {% for r in regions %}
+            <option value="{{ r }}" {% if r == selected_region %}selected{% endif %}>{{ r }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+          <button type="submit" class="btn btn-primary w-100">조회</button>
+        </div>
+      </form>
+
+      <div id="trendChart" style="width: 100%; height: 500px;"></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const chartData = JSON.parse('{{ chart_data_json|escapejs }}');
+    let trendData = JSON.parse('{{ trend_data_json|escapejs }}');
+
+    const barChartLayout = {
+      barmode: "group",
+      margin: { t: 30 },
+      showlegend: true,
+      legend: {
+        orientation: "h",
+        y: -0.2,
+        x: 0.5,
+        xanchor: "center",
+      },
+      yaxis: {
+        tickformat: ",.0f",
+        tickprefix: "₩",
+        hoverformat: ",.0f",
+        tickmode: "array",
+        ticktext: ["1억", "10억", "50억", "100억"],
+        tickvals: [100000000, 1000000000, 5000000000, 10000000000],
+      }
+    };
+
+    const lineChartLayout = {
+      margin: { t: 30 },
+      showlegend: true,
+      legend: {
+        orientation: "h",
+        y: -0.2,
+        x: 0.5,
+        xanchor: "center",
+      },
+      yaxis: {
+        tickformat: ".1f",
+        ticksuffix: "%"
+      }
+    };
+
+    function drawChart() {
+      const data = [
+        {
+          x: chartData.region,
+          y: chartData.korean_sales,
+          name: "한국영화",
+          type: "bar",
+          marker: { color: "#3498DB" },
+          hovertemplate: "한국: ₩%{y:,.0f}<extra></extra>",
+        },
+        {
+          x: chartData.region,
+          y: chartData.foreign_sales,
+          name: "외국영화",
+          type: "bar",
+          marker: { color: "#E67E22" },
+          hovertemplate: "외국: ₩%{y:,.0f}<extra></extra>",
+        },
+      ];
+      Plotly.newPlot("chart", data, barChartLayout);
+    }
+
+    function drawTrendChart() {
+      const data = [
+        {
+          x: trendData.months,
+          y: trendData.korean_ratio,
+          name: "한국영화",
+          type: "scatter",
+          mode: "lines+markers",
+          line: { color: "#3498DB" },
+          hovertemplate: "한국: %{y:.1f}%<extra></extra>",
+        },
+        {
+          x: trendData.months,
+          y: trendData.foreign_ratio,
+          name: "외국영화",
+          type: "scatter",
+          mode: "lines+markers",
+          line: { color: "#E67E22" },
+          hovertemplate: "외국: %{y:.1f}%<extra></extra>",
+        },
+      ];
+      Plotly.newPlot("trendChart", data, lineChartLayout);
+    }
+
+    function fetchTrendData() {
+      const trendYear = document.getElementById("trendYear").value;
+      const trendRegion = document.getElementById("trendRegion").value;
+
+      document.getElementById("trendChart").style.opacity = "0.5";
+
+      fetch(`/regional_boxoffice/get_trend_data/?trendYear=${trendYear}&trendRegion=${encodeURIComponent(trendRegion)}`)
+        .then(response => response.json())
+        .then(data => {
+          trendData = data;
+          drawTrendChart();
+          document.getElementById("trendChart").style.opacity = "1";
+        })
+        .catch(error => {
+          console.error("데이터 오류:", error);
+          document.getElementById("trendChart").style.opacity = "1";
+        });
+    }
+
+    document.getElementById("filterForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const params = new URLSearchParams(window.location.search);
+      params.set("year", document.getElementById("year").value);
+      params.set("month", document.getElementById("month").value);
+      window.location.href = `?${params.toString()}`;
+    });
+
+    document.getElementById("trendFilterForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      fetchTrendData();
+    });
+
+    window.addEventListener("resize", function () {
+      Plotly.Plots.resize("chart");
+      Plotly.Plots.resize("trendChart");
+    });
+
+    drawChart();
+    drawTrendChart();
+  });
+</script>
+{% endblock %}

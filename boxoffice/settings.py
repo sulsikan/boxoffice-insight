@@ -38,10 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'regional_boxoffice',
+    'regional_cumulative_stats',
     'genre_trend.apps.GenreTrendConfig',
     'international_boxoffice',
     'korean_boxoffice',
-    'django.contrib.humanize',
+    'movie_performance_summary',
+    'django.contrib.humanize',  # humanize 추가
 ]
 
 MIDDLEWARE = [

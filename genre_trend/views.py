@@ -1,11 +1,10 @@
-from django.http import HttpResponse
 from django.shortcuts import render
-from selenium.webdriver.common.devtools.v133.page import print_to_pdf
 from collections import defaultdict
-from genre_trend.models import MovieBasicInfo
 from genre_trend.models import MovieDetail
-import pandas as pd
-
+from django.db.models import Sum, Count, IntegerField
+from django.db.models.functions import Substr, Cast
+from collections import defaultdict
+import re
 
 def index(request):
     return render(request, 'base.html')
@@ -42,58 +41,53 @@ def genre_cumulative_stats(request):
 
     return render(request, 'genre_trend/genre_cumulative_stats.html', context)
 
+def parse_int(value):
+    """쉼표(,) 제거하고 정수로 변환. 실패 시 0 반환"""
+    try:
+        return int(re.sub(r'[^\d]', '', value))  # 숫자만 추출
+    except:
+        return 0
 
 def genre_yearly_trends(request):
-    selected_year = int(request.GET.get('year', 2010))
+    default_year = '2025'
+    selected_year = request.GET.get('year') or '2025'  # 선택된 연도 받기
+    movies = MovieDetail.objects.all()
 
-    qs = MovieDetail.objects.all().values()
-    df = pd.DataFrame(list(qs))
-    # 예시 데이터프레임 (이미 있는 상태라고 가정)
-    df['sales'] = df['sales'].str.replace(',', '').astype(int)
-    df['audience'] = df['audience'].str.replace(',', '').astype(int)
-    df['screen'] = df['screen'].str.replace(',', '').astype(int)
-    df['release_year'] = pd.to_datetime(df['release_date']).dt.year
+    all_years = sorted(set(m.release_date[:4] for m in movies))  # 연도 목록
 
-    # genre 다중 분해
-    df['genre'] = df['genre'].str.split(',')
-    df = df.explode('genre')
-    df['genre'] = df['genre'].str.strip()
+    if selected_year:
+        movies = movies.filter(release_date__startswith=selected_year)
 
-    # 집계
-    agg_df = df.groupby(['release_year', 'genre']).agg({
-        'sales': 'sum',
-        'audience': 'sum',
-        'screen': 'sum',
-        'movie_name': 'count'
-    }).rename(columns={'movie_name': 'release_count'}).reset_index()
+    result = defaultdict(lambda: {
+        'total_sales': 0,
+        'total_audience': 0,
+        'total_screens': 0,
+        'movie_count': 0
+    })
 
-    chart_info = [
-        ('salesChart', '판매액', 'sales'),
-        ('audienceChart', '관객수', 'audience'),
-        ('screenChart', '스크린 수', 'screen'),
-        ('countChart', '편수', 'release_count')
-    ]
+    for movie in movies:
+        year = movie.release_date[:4]
+        genres = [g.strip() for g in movie.genre.split(',')]
+        for genre in genres:
+            key = (year, genre)
+            result[key]['total_sales'] += parse_int(movie.sales)
+            result[key]['total_audience'] += parse_int(movie.audience)
+            result[key]['total_screens'] += parse_int(movie.screen)
+            result[key]['movie_count'] += 1
 
-    data = agg_df.to_dict(orient='records')
-    filtered = agg_df[agg_df['release_year'] == selected_year]
+    sorted_data = sorted(
+        [
+            {'year': year, 'genre': genre, **values}
+            for (year, genre), values in result.items()
+        ],
+        key=lambda x: (x['year'], x['genre'])
+    )
+    top5_data = sorted_data[:5]
     return render(request, 'genre_trend/genre_yearly_trends.html', {
-        'data': filtered.to_dict(orient='records'),
+        'data': sorted_data,
+        'years': all_years,
         'selected_year': selected_year,
-        'year_choices': sorted(agg_df['release_year'].unique(), reverse=True),
-        'chart_info': chart_info,
+        'top5': top5_data
     })
 
 
-def genre_stat(request):
-    movies = MovieBasicInfo.objects.all()
-    data = {}
-    for movie in movies:
-        genres = movie.genre.split(",")
-        for genre in genres:
-            genre = genre.strip()
-            data[genre] = data.get(genre, 0) + 1
-    context = {
-        'labels': list(data.keys()),
-        'values': list(data.values()),
-    }
-    return render(request, 'genre_trend/genre_stat.html', context)

@@ -1,0 +1,259 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4">
+
+  <!-- 지역별 누적매출액 파이차트 -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">영화의 지역별 누적 매출 점유율</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-8">
+              <!-- 영화 검색 섹션 -->
+              <div class="mt-4 mb-5 text-center">
+                <form id="movieSearchForm" class="d-flex justify-content-center" style="gap: 0.5rem;">
+                  <input
+                    type="text"
+                    class="form-control text-center"
+                    style="width: 400px;"
+                    id="movieSearchInput"
+                    placeholder="영화 제목을 입력하세요"
+                    value=""
+                  />
+                  <button type="submit" class="btn btn-primary w-auto px-4">검색</button>
+                </form>
+              </div>
+              <div id="pieChart" style="width: 100%; height: 500px; margin-top: 6rem; display: flex; justify-content: center; align-items: center;"></div>
+            </div>
+            <div class="col-md-4">
+              <div class="table-responsive">
+                <table class="table table-striped text-center">
+                  <thead>
+                    <tr>
+                      <th>지역</th>
+                      <th>누적매출액</th>
+                      <th>누적관객수</th>
+                    </tr>
+                  </thead>
+                  <tbody id="statsTable">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 지역별 상위 영화 워드클라우드 -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">지역별 상위 흥행 영화 TOP 20</h4>
+        </div>
+        <div class="card-body">
+          <!-- 지역 선택 버튼 -->
+          <div class="mt-4 d-flex flex-column align-items-center mb-4" id="regionButtons">
+            <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">
+              <button class="btn btn-outline-success btn-lg" data-region="서울시">서울시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="경기도">경기도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="부산시">부산시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="대구시">대구시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="인천시">인천시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="광주시">광주시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="대전시">대전시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="울산시">울산시</button>
+              <button class="btn btn-outline-success btn-lg" data-region="세종시">세종시</button>
+            </div>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              <button class="btn btn-outline-success btn-lg" data-region="강원도">강원도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="충청북도">충청북도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="충청남도">충청남도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="전라북도">전라북도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="전라남도">전라남도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="경상북도">경상북도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="경상남도">경상남도</button>
+              <button class="btn btn-outline-success btn-lg" data-region="제주도">제주도</button>
+            </div>
+          </div>
+          <div id="wordCloud" style="width: 100%; height: 500px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 초기 데이터 표시
+    const initialPieData = JSON.parse('{{ initial_pie_data|escapejs }}');
+    const initialTableData = JSON.parse('{{ initial_table_data|escapejs }}');
+    
+    Plotly.newPlot("pieChart", [initialPieData], {
+      height: 500,
+      margin: { t: 0, b: 0, l: 0, r: 0 },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      textinfo: 'label+percent',
+      textposition: 'inside',
+      insidetextorientation: 'radial',
+      texttemplate: '%{label}<br>%{percent:.1%}',
+      hovertemplate: '%{label}<br>%{percent:.1%}<br>매출액: %{value:,.0f}원<extra></extra>',
+      textfont: {
+        size: 16
+      },
+      outsidetextfont: {
+        size: 16
+      },
+      automargin: true,
+      showlegend: false
+    });
+
+    const tbody = document.getElementById("statsTable");
+    tbody.innerHTML = initialTableData.map(item => `
+      <tr>
+        <td>${item.region}</td>
+        <td>${item.sales}원</td>
+        <td>${item.audience}명</td>
+      </tr>
+    `).join('');
+
+    // 영화 검색 이벤트
+    document
+      .getElementById("movieSearchForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        const title = document.getElementById("movieSearchInput").value.trim();
+        if (title) {
+          fetch(`/regional_cumulative_stats/api/movie_stats/?title=${encodeURIComponent(title)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.pie_data) {
+                // 3.5% 미만인 항목들은 텍스트 표시를 숨김
+                const values = data.pie_data.values;
+                const total = values.reduce((a, b) => a + b, 0);
+                const percentages = values.map(v => (v / total) * 100);
+                
+                const textpositions = percentages.map(p => p < 3.5 ? 'none' : 'inside');
+                const texttemplates = percentages.map(p => p < 3.5 ? '' : '%{label}<br>%{percent:.1%}');
+                
+                Plotly.newPlot("pieChart", [{
+                  ...data.pie_data,
+                  textposition: textpositions,
+                  texttemplate: texttemplates,
+                  hovertemplate: '%{label}<br>%{percent:.1%}<br>매출액: %{value:,.0f}원<extra></extra>'
+                }], {
+                  height: 500,
+                  margin: { t: 0, b: 0, l: 0, r: 0 },
+                  paper_bgcolor: 'rgba(0,0,0,0)',
+                  plot_bgcolor: 'rgba(0,0,0,0)',
+                  textfont: {
+                    size: 20
+                  },
+                  outsidetextfont: {
+                    size: 20
+                  },
+                  automargin: true,
+                  showlegend: false
+                });
+              }
+              if (data.table_data) {
+                const tbody = document.getElementById("statsTable");
+                tbody.innerHTML = data.table_data.map(item => `
+                  <tr>
+                    <td>${item.region}</td>
+                    <td>${item.sales}원</td>
+                    <td>${item.audience}명</td>
+                  </tr>
+                `).join('');
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+      });
+
+    // 워드클라우드 초기화
+    function initializeWordCloud() {
+      const defaultRegion = "서울시";
+      fetch(`/regional_cumulative_stats/api/top_movies_by_region/?region=${encodeURIComponent(defaultRegion)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.wordcloud_data) {
+            // 기존 워드클라우드 제거
+            const wordCloudElement = document.getElementById("wordCloud");
+            wordCloudElement.innerHTML = '';
+            
+            // 새로운 워드클라우드 생성
+            WordCloud(wordCloudElement, {
+            list: data.wordcloud_data.map((item) => [item.text, item.value]),
+            gridSize: 18,
+            weightFactor: 0.4,
+            minSize: 10,
+            maxSize: 50,
+            fontFamily: "BobaesumJindo",
+            color: function () {
+              return `hsl(${Math.random() * 360}, 80%, 50%)`;  // 🎨 랜덤 컬러!
+            },
+            backgroundColor: "#fff",
+            rotateRatio: 0,
+          });
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+
+    // 지역 버튼 이벤트
+    document
+      .getElementById("regionButtons")
+      .addEventListener("click", function (e) {
+        if (e.target.tagName === "BUTTON") {
+          const region = e.target.dataset.region;
+          // 모든 버튼에서 active 클래스 제거
+          document
+            .querySelectorAll("#regionButtons button")
+            .forEach((btn) => {
+              btn.classList.remove("active");
+            });
+          // 클릭된 버튼에 active 클래스 추가
+          e.target.classList.add("active");
+
+          fetch(`/regional_cumulative_stats/api/top_movies_by_region/?region=${encodeURIComponent(region)}`)
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.wordcloud_data) {
+                // 기존 워드클라우드 제거
+                const wordCloudElement = document.getElementById("wordCloud");
+                wordCloudElement.innerHTML = '';
+                
+                // 새로운 워드클라우드 생성
+                WordCloud(wordCloudElement, {
+                  list: data.wordcloud_data.map((item) => [item.text, item.value]),
+                  gridSize: 18,
+                  weightFactor: 0.4,
+                  minSize: 10,
+                  maxSize: 30,
+                  fontFamily: "BobaesumJindo",
+                  color: function () {
+                    return `hsl(${Math.random() * 360}, 60%, 50%)`;
+                  },
+                  backgroundColor: "#fff",
+                  rotateRatio: 0,
+                });
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+      });
+
+    // 페이지 로드 시 워드클라우드 초기화
+    initializeWordCloud();
+  });
+</script>
+{% endblock %}
