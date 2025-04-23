@@ -4,7 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.db.models import Q, Sum
 from datetime import datetime
 from .models import InternationalBoxOffice
-from django.db.models.functions import ExtractYear, ExtractMonth
+from django.db.models.functions import ExtractYear, ExtractMonth, ExtractQuarter
 
 COUNTRY_NAMES = {
     'US': '미국',
@@ -158,6 +158,115 @@ def get_date_range(request):
             'start_date': first_record.release_date.strftime('%Y-%m-%d'),
             'end_date': last_record.release_date.strftime('%Y-%m-%d')
         })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+def movie_international_visualization_view(request):
+    """Render the movie international visualization page"""
+    years = range(2015, 2026)
+    # 영화 제목 목록 가져오기 (중복 제거)
+    movies = InternationalBoxOffice.objects.values_list('title', flat=True).distinct().order_by('title')
+    return render(request, 'international_boxoffice/movie-international-visualization.html', {
+        'years': years,
+        'movies': movies
+    })
+
+@require_http_methods(["GET"])
+def get_movie_revenue_data(request):
+    """Get movie revenue data by country and period"""
+    try:
+        movie_title = request.GET.get('movie_title')
+        year = request.GET.get('year')
+        period = request.GET.get('period', 'year')
+
+        if not movie_title:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Movie title is required'
+            }, status=400)
+
+        # Base query
+        query = InternationalBoxOffice.objects.filter(
+            title__icontains=movie_title
+        )
+
+        if year:
+            query = query.filter(year=year)
+
+        # Group by period
+        if period == 'year':
+            data = query.values(
+                'year',
+                'country'
+            ).annotate(
+                total_revenue=Sum('weekend_revenue')
+            ).order_by('year', 'country')
+        elif period == 'quarter':
+            data = query.annotate(
+                quarter=ExtractQuarter('release_date')
+            ).values(
+                'year',
+                'quarter',
+                'country'
+            ).annotate(
+                total_revenue=Sum('weekend_revenue')
+            ).order_by('year', 'quarter', 'country')
+        else:  # month
+            data = query.values(
+                'year',
+                'country',
+                month=ExtractMonth('release_date')
+            ).annotate(
+                total_revenue=Sum('weekend_revenue')
+            ).order_by('year', 'month', 'country')
+
+        # Process data for chart and table
+        chart_data = {}
+        table_data = []
+
+        for record in data:
+            country_code = record['country']
+            country_name = COUNTRY_NAMES.get(country_code, country_code)
+            currency = CURRENCY_BY_COUNTRY.get(country_code, 'USD')
+            
+            # Convert revenue to USD
+            revenue_usd = convert_to_usd(record['total_revenue'], currency)
+            
+            # Format period string
+            if period == 'year':
+                period_str = f"{record['year']}년"
+            elif period == 'quarter':
+                period_str = f"{record['year']}년 {record['quarter']}분기"
+            else:
+                period_str = f"{record['year']}년 {record['month']}월"
+
+            # Add to chart data
+            if country_name not in chart_data:
+                chart_data[country_name] = {
+                    'periods': [],
+                    'revenues': []
+                }
+            chart_data[country_name]['periods'].append(period_str)
+            chart_data[country_name]['revenues'].append(revenue_usd)
+
+            # Add to table data
+            table_data.append({
+                'country': country_name,
+                'period': period_str,
+                'revenue_usd': revenue_usd,
+                'revenue_local': record['total_revenue'],
+                'currency': currency
+            })
+
+        return JsonResponse({
+            'status': 'success',
+            'chart_data': chart_data,
+            'table_data': table_data
+        })
+
     except Exception as e:
         return JsonResponse({
             'status': 'error',
