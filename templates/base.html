@@ -201,11 +201,6 @@
                         연도별 장르 트렌드
                     </a>
                 </li>
-                <li>
-                    <a href="{% url 'genre_stat' %}" class="{% if 'genre_stat' in request.path %}active{% endif %}">
-                        장르 점유율
-                    </a>
-                </li>
             </ul>
         </li>
         <li>
@@ -227,28 +222,28 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdownBtn = document.querySelector('.dropdown-btn');
-        const arrow = dropdownBtn.querySelector('.arrow');
-        const subMenu = dropdownBtn.nextElementSibling;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const dropdowns = document.querySelectorAll('.dropdown-btn');
+          dropdowns.forEach(btn => {
+            const arrow = btn.querySelector('.arrow');
+            const subMenu = btn.nextElementSibling;
 
-        // URL에 'international'이 포함되어 있으면 서브메뉴를 자동으로 펼침
-        if (window.location.pathname.includes('international')) {
-            subMenu.classList.add('show');
-            arrow.classList.add('rotate');
-        }
-        // URL에 'genre'이 포함되어 있으면 서브메뉴를 자동으로 펼침
-        if (window.location.pathname.includes('genre')) {
-            subMenu.classList.add('show');
-            arrow.classList.add('rotate');
-        }
-        dropdownBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            subMenu.classList.toggle('show');
-            arrow.classList.toggle('rotate');
+            // 자동 펼침 조건
+            const path = window.location.pathname;
+            if (path.includes('international') || path.includes('genre')) {
+              subMenu.classList.add('show');
+              arrow.classList.add('rotate');
+            }
+
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              subMenu.classList.toggle('show');
+              arrow.classList.toggle('rotate');
+            });
+          });
         });
-    });
+      </script>
 </script>
 {% block extra_js %}{% endblock %}
 </body>
