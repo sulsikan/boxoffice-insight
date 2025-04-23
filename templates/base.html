@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Box Office Insights</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <!-- Boxicons CSS -->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
     <!-- Custom CSS -->
-    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet" />
     <style>
         /* Sidebar Styles */
         .sidebar {
@@ -87,10 +93,45 @@
             margin-left: 250px;
             padding: 20px;
         }
+
+        /* Dropdown Styles */
+        .dropdown-btn {
+            width: 100%;
+        }
+
+        .dropdown-btn a {
+            position: relative;
+        }
+
+        .arrow {
+            position: absolute;
+            right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .sub-menu {
+            display: none;
+            list-style: none;
+            padding-left: 0;
+            background: #1d1b31;
+        }
+
+        .sub-menu li a {
+            padding-left: 40px;
+            font-size: 14px;
+        }
+
+        .sub-menu.show {
+            display: block;
+        }
+
+        .arrow.rotate {
+            transform: rotate(180deg);
+        }
     </style>
     {% block extra_css %}{% endblock %}
-</head>
-<body>
+  </head>
+  <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-details">
@@ -105,15 +146,30 @@
                 </a>
             </li>
             <li>
-                <a href="{% url 'international_boxoffice_visualization' %}" class="{% if 'international-visualization' in request.path %}active{% endif %}">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">국가 매출 순위</span>
-                </a>
+                <div class="dropdown-btn">
+                    <a href="#" class="{% if 'international' in request.path %}active{% endif %}">
+                        <i class='bx bx-bar-chart-alt-2'></i>
+                        <span class="link_name">국가 및 대륙별 분석</span>
+                        <i class='bx bx-chevron-down arrow'></i>
+                    </a>
+                </div>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="{% url 'international_boxoffice_visualization' %}" class="{% if 'international-visualization' in request.path %}active{% endif %}">
+                            국가별 매출 변화
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'movie_international_visualization' %}" class="{% if 'movie-international-visualization' in request.path %}active{% endif %}">
+                            영화별 국가 매출
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li>
-                <a href="#" class="{% if 'joseunghyeon' in request.path %}active{% endif %}">
+                <a href="{% url 'korean_boxoffice:index' %}" class="{% if 'joseunghyeon' in request.path %}active{% endif %}">
                     <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">조성현</span>
+                    <span class="link_name">한국 박스오피스</span>
                 </a>
             </li>
             <li>
@@ -147,24 +203,61 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="{% if 'parksiyoung' in request.path %}active{% endif %}">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">박시영</span>
-                </a>
-            </li>
-            
-        </ul>
+                <div class="dropdown-btn">
+                  <a href="#" class="{% if 'regional' in request.path %}active{% endif %}">
+                    <i class="bx bx-bar-chart-alt-2"></i>
+                    <span class="link_name">지역별 분석</span>
+                    <i class="bx bx-chevron-down arrow"></i>
+                  </a>
+                </div>
+                <ul class="sub-menu">
+                  <li>
+                    <a href="{% url 'regional_cumulative' %}" class="{% if 'regional_cumulative' in request.path %}active{% endif %}" style="color: #ccc;">
+                      지역별 누적통계
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'regional_boxoffice' %}" class="{% if 'regional_boxoffice' in request.path %}active{% endif %}" style="color: #ccc;">
+                      지역별 점유율
+                    </a>
+                  </li>
+                </ul>
+              </li>
+          </ul>
+        </li>
+      </ul>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
-        {% block content %}{% endblock %}
-    </div>
+    <div class="main-content">{% block content %}{% endblock %}</div>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const dropdowns = document.querySelectorAll('.dropdown-btn');
+          dropdowns.forEach(btn => {
+            const arrow = btn.querySelector('.arrow');
+            const subMenu = btn.nextElementSibling;
+      
+            // 자동 펼침 조건
+            const path = window.location.pathname;
+            if (path.includes('international') || path.includes('regional')) {
+              subMenu.classList.add('show');
+              arrow.classList.add('rotate');
+            }
+      
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              subMenu.classList.toggle('show');
+              arrow.classList.toggle('rotate');
+            });
+          });
+        });
+      </script>      
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html> 

@@ -1,8 +1,9 @@
 import logging
-import traceback
 from time import sleep
 
+from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
@@ -20,7 +21,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boxoffice.settings")
 import django
 
 django.setup()
-from korean_boxoffice.models import DailyBoxoffice
+from korean_boxoffice.models import DailyBoxoffice, MovieInfo
 
 KST = timezone(timedelta(hours=+9))
 UTC = timezone.utc
@@ -58,7 +59,7 @@ def str_to_float(str_float):
     return float(str_replace_symbol(str_float))
 
 
-key_funcs = {
+dayily_boxoffice_parsing_funcs = {
     'rank': str_to_int,
     'movie_name': str_replace_symbol,
     'release_date': to_datetime_KST,
@@ -119,7 +120,7 @@ def select_day(driver: webdriver.Chrome, year, month, day):
     sleep(3)
 
 
-def crawl_korean_boxoffice(driver: webdriver.Chrome):
+def crawl_daily_boxoffice(driver: webdriver.Chrome):
     ranking_dates = []
     for h4 in driver.find_elements(By.TAG_NAME, 'h4'):
         if h4.text.strip() == '':
@@ -135,8 +136,8 @@ def crawl_korean_boxoffice(driver: webdriver.Chrome):
         ranking_date = ranking_dates[i]
         for row in tbody.find_elements(By.TAG_NAME, 'tr'):
             row_data = {'ranking_date': ranking_date}
-            for k, data in zip(key_funcs, row.find_elements(By.TAG_NAME, 'td')):
-                func = key_funcs.get(k, None)
+            for k, data in zip(dayily_boxoffice_parsing_funcs, row.find_elements(By.TAG_NAME, 'td')):
+                func = dayily_boxoffice_parsing_funcs.get(k, None)
                 row_data[k] = func(data.text.strip())
 
             row_data[
@@ -148,22 +149,100 @@ def crawl_korean_boxoffice(driver: webdriver.Chrome):
             except Exception as e:
                 print(e)
                 print(row_data)
+
+
+def crawl_movie_info(driver: webdriver.Chrome, visited_movie_names: set):
+    '''
+        영화 상세페이지 클릭해서 크롤링
+    '''
+    inclease = 1
+    for i, tbody in enumerate(driver.find_elements(By.TAG_NAME, 'tbody')):
+        if tbody.text.strip() == '':
+            break
+
+        for a_tag in tbody.find_elements(By.TAG_NAME, 'a'):
+            movie_name = a_tag.text.strip()
+            if movie_name in visited_movie_names:
                 continue
+
+            visited_movie_names.add(movie_name)
+
+            a_tag.click()
+            sleep(1)
+
+            bs = BeautifulSoup(driver.page_source, 'html.parser')
+            span_text_set = set(span.text for span in bs.find_all('span'))
+            is_now_showing = True if '영화상영관상영중' in span_text_set else False  # selenium xpath로 처리하면 span없을경우 타임아웃까지 오래기다림
+
+            movie_infos = driver.find_element(By.XPATH,
+                                              f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/dl').find_elements(
+                By.TAG_NAME, 'dd')
+            movie_id = movie_infos[0].text.strip()
+
+            infos = movie_infos[3].text.strip().split('|')
+            genre = infos[2].strip()
+            nation = infos[5].strip()
+
+            release_date = movie_infos[5].text.strip()
+
+            img = driver.find_element(By.XPATH, f'//*[@id="ui-id-{inclease}"]/div/div[1]/div[2]/a/img')
+            img_src = img.get_attribute('src').strip()
+
+            release_date = to_datetime_KST(release_date) if release_date else None
+
+            movie_data = {
+                'movie_id': int(movie_id),  # 중복 입력 방지용
+                'movie_name': movie_name,
+                'genre': genre,
+                'is_now_showing': is_now_showing,
+                'nation': nation,
+                'release_date': release_date,
+                'movie_img': img_src,
+            }
+
+            try:
+                MovieInfo(**movie_data).save()
+            except Exception as e:
+                print(e)
+                print(movie_data)
+
+            close_btn = driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[1]/a[2]/span')
+            close_btn.click()
+            sleep(1)
+            inclease += 2
+
+
+def make_daily_boxoffice_fk():
+    movie_name_to_movie = dict()
+    for movie in MovieInfo.objects.all():
+        movie_name_to_movie[movie.movie_name] = movie
+
+    print(movie_name_to_movie)
+
+    for daily_boxoffice in DailyBoxoffice.objects.all():
+        daily_boxoffice.movie_id = movie_name_to_movie.get(daily_boxoffice.movie_name, None)
+        daily_boxoffice.save()
+
+
+def crawl(url: str):
+    with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
+        driver.get(url)
+        driver.implicitly_wait(TIMEOUT)
+        dt_start = datetime(2025, 1, 1, tzinfo=KST)
+        dt_now = datetime.now(KST)
+        dt_yesterday = datetime(dt_now.year, dt_now.month, dt_now.day, tzinfo=KST) - timedelta(days=1)
+
+        visited_movie_names = set()
+        dt = dt_start
+        while dt <= dt_yesterday:
+            print(dt)
+            select_day(driver, dt.year, dt.month, dt.day)
+            crawl_daily_boxoffice(driver)
+            crawl_movie_info(driver, visited_movie_names)
+            dt += timedelta(days=7)
+
+        make_daily_boxoffice_fk()
 
 
 if __name__ == '__main__':
-    with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
-        driver.get('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
-        driver.implicitly_wait(TIMEOUT)
-        dt_start = datetime(2025, 1, 1, tzinfo=KST)
-        now = datetime.now(KST)
-        dt_end = datetime(now.year, now.month, now.day, tzinfo=KST)
-
-        dt = dt_start
-        print(dt)
-        while dt < dt_end:
-            print(dt)
-            select_day(driver, dt.year, dt.month, dt.day)
-            crawl_korean_boxoffice(driver)
-
-            dt += timedelta(days=7)
+    crawl('https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do')
