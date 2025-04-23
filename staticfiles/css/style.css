@@ -102,4 +102,22 @@ canvas {
         width: 100%;
         margin: 0.5rem 0 !important;
     }
-} 
+}
+
+/* 추가 스타일링 */
+/* 선택된 네비게이션 링크 스타일 */
+.nav-link.active {
+    background-color: #1d1b31; /* 선택된 블록의 배경색 */
+    color: #fff; /* 텍스트 색상 */
+    display: block; /* 블록 요소로 설정 */
+    width: 100%; /* 가로 전체를 채움 */
+    padding: 0.5rem 1rem; /* 적절한 패딩 추가 */
+    border-radius: 0; /* 둥근 모서리 제거 (필요 시) */
+}
+
+/* 하위 메뉴 스타일 */
+.sb-sidenav-menu-nested .nav-link {
+    padding-left: 2.5rem; /* 하위 메뉴의 왼쪽 여백 */
+    display: block; /* 블록 요소로 설정 */
+    width: 100%; /* 가로 전체를 채움 */
+}

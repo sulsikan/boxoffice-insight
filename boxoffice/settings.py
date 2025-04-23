@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'regional_cumulative_stats',
     'genre_trend.apps.GenreTrendConfig',
     'international_boxoffice',
-    'korean_boxoffice'
+    'korean_boxoffice',
+    'movie_performance_summary',
+    'django.contrib.humanize',  # humanize 추가
 ]
 
 MIDDLEWARE = [
