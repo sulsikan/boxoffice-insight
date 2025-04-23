@@ -1,5 +1,4 @@
 from datetime import datetime, timezone, timedelta
-
 from django.http import Http404, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from rest_framework.status import HTTP_400_BAD_REQUEST
