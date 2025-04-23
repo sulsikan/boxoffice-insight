@@ -1,17 +1,16 @@
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Box Office Insights</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Boxicons CSS -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <!-- Custom CSS -->
     <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <style>
-        /* Sidebar Styles */
         .sidebar {
             position: fixed;
             top: 0;
@@ -23,235 +22,175 @@
             transition: all 0.5s ease;
             padding-top: 20px;
         }
-
         .sidebar .logo-details {
             height: 60px;
-            width: 100%;
             display: flex;
             align-items: center;
             padding: 0 20px;
         }
-
         .sidebar .logo-details i {
             font-size: 28px;
             color: #fff;
             margin-right: 10px;
         }
-
         .sidebar .logo-details .logo_name {
             color: #fff;
             font-size: 20px;
             font-weight: 600;
         }
-
         .sidebar .nav-links {
+            list-style: none;
             padding: 0;
             margin: 0;
-            list-style: none;
         }
-
-        .sidebar .nav-links li {
-            position: relative;
-            list-style: none;
-        }
-
         .sidebar .nav-links li a {
-            height: 50px;
             display: flex;
             align-items: center;
-            text-decoration: none;
             padding: 0 20px;
-            transition: all 0.4s ease;
+            height: 50px;
+            color: #fff;
+            text-decoration: none;
         }
-
         .sidebar .nav-links li a:hover,
         .sidebar .nav-links li a.active {
             background: #1d1b31;
         }
-
-        .sidebar .nav-links li i {
-            min-width: 30px;
-            text-align: center;
-            font-size: 18px;
-            color: #fff;
-        }
-
-        .sidebar .nav-links li a .link_name {
-            color: #fff;
-            font-size: 15px;
-            font-weight: 400;
-        }
-
-        /* Main Content Styles */
         .main-content {
             margin-left: 250px;
             padding: 20px;
         }
-
-        /* Dropdown Styles */
-        .dropdown-btn {
-            width: 100%;
-        }
-
-        .dropdown-btn a {
-            position: relative;
-        }
-
-        .arrow {
-            position: absolute;
-            right: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .sub-menu {
-            display: none;
-            list-style: none;
-            padding-left: 0;
-            background: #1d1b31;
-        }
-
-        .sub-menu li a {
-            padding-left: 40px;
-            font-size: 14px;
-        }
-
-        .sub-menu.show {
-            display: block;
-        }
-
-        .arrow.rotate {
-            transform: rotate(180deg);
+        .chart-card canvas {
+            max-height: 360px;
+            min-height: 300px;
+            width: 100% !important;
+            height: auto !important;
         }
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <body>
-<!-- Sidebar -->
 <div class="sidebar">
     <div class="logo-details">
         <i class='bx bx-movie-play'></i>
         <span class="logo_name">BoxOffice Insight</span>
     </div>
     <ul class="nav-links">
-        <li>
-            <a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">
-                <i class='bx bx-grid-alt'></i>
-                <span class="link_name">대시보드</span>
-            </a>
-        </li>
-<!--        <li>-->
-<!--            <div class="dropdown-btn">-->
-<!--                <a href="#" class="{% if 'international' in request.path %}active{% endif %}">-->
-<!--                    <i class='bx bx-bar-chart-alt-2'></i>-->
-<!--                    <span class="link_name">국가 및 대륙별 분석</span>-->
-<!--                    <i class='bx bx-chevron-down arrow'></i>-->
-<!--                </a>-->
-<!--            </div>-->
-<!--            <ul class="sub-menu">-->
-<!--                <li>-->
-<!--                    <a href="{% url 'international_boxoffice_visualization' %}"-->
-<!--                       class="{% if 'international-visualization' in request.path %}active{% endif %}">-->
-<!--                        국가별 매출 변화-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--                <li>-->
-<!--                    <a href="{% url 'movie_international_visualization' %}"-->
-<!--                       class="{% if 'movie-international-visualization' in request.path %}active{% endif %}">-->
-<!--                        영화별 국가 매출-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </li>-->
-        <li>
-            <a href="#" class="{% if 'joseunghyeon' in request.path %}active{% endif %}">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <span class="link_name">국가 및 대륙별 분석</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="{% if 'joseunghyeon' in request.path %}active{% endif %}">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <span class="link_name">조성현</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="{% if 'ojueon' in request.path %}active{% endif %}">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <span class="link_name">오주언</span>
-            </a>
-        </li>
-        <li>
-            <div class="dropdown-btn">
-                <a href="#" class="{% if 'genre' in request.path %}active{% endif %}">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">장르별 분석</span>
-                    <i class='bx bx-chevron-down arrow'></i>
-                </a>
-            </div>
-            <ul class="sub-menu">
-                <li>
-                    <a href="{% url 'genre_cumulative_stats' %}"
-                       class="{% if 'genre_cumulative_stats' in request.path %}active{% endif %}">
-                        장르별 누적 통계 분석
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'genre_yearly_trends' %}"
-                       class="{% if 'genre_yearly_trends' in request.path %}active{% endif %}">
-                        연도별 장르 트렌드
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'genre_stat' %}" class="{% if 'genre_stat' in request.path %}active{% endif %}">
-                        장르 점유율
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a href="#" class="{% if 'parksiyoung' in request.path %}active{% endif %}">
-                <i class='bx bx-bar-chart-alt-2'></i>
-                <span class="link_name">박시영</span>
-            </a>
-        </li>
+        <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"><i class='bx bx-grid-alt'></i><span class="link_name">대시보드</span></a></li>
+        <li><a href="#" class="{% if 'genre' in request.path %}active{% endif %}"><i class='bx bx-bar-chart-alt-2'></i><span class="link_name">장르별 분석</span></a></li>
     </ul>
 </div>
-
-<!-- Main Content -->
-<!--장르 별 영화 파이차트 -->
 <div class="main-content">
-    <h2 style="text-align:center;">장르별 누적 통계 분석</h2>
-    <div style="width: 60%; margin: auto;">
-        <canvas id="pie-chart" width="400" height="400"></canvas>
+    <h2 class="mb-4 text-center">연도별 장르 트렌드</h2>
+    <form method="get" class="mb-4 text-center">
+        <select name="year" class="form-select w-auto d-inline" onchange="this.form.submit()">
+            {% for y in year_choices %}
+                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for chart in chart_info %}
+        <div class="col">
+            <div class="card chart-card shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div class="w-50">
+                        <canvas id="{{ chart.0 }}"></canvas>
+                    </div>
+                    <div class="w-50 ps-3">
+                        <ul id="{{ chart.0 }}-legend" class="list-unstyled small mb-0"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdownBtn = document.querySelector('.dropdown-btn');
-        const arrow = dropdownBtn.querySelector('.arrow');
-        const subMenu = dropdownBtn.nextElementSibling;
+    const raw = {{ data|safe }};
+    const labels = raw.map(r => r.genre);
+    const datasets = {
+        sales: raw.map(r => r.sales),
+        audience: raw.map(r => r.audience),
+        screen: raw.map(r => r.screen),
+        release_count: raw.map(r => r.release_count)
+    };
 
-        // URL에 'international'이 포함되어 있으면 서브메뉴를 자동으로 펼침
-        if
-            (window.location.pathname.includes('genre')
-        ) {
-            subMenu.classList.add('show');
-            arrow.classList.add('rotate');
-        }
+    function drawDoughnutChart(id, title, rawData) {
+        const total = rawData.reduce((acc, val) => acc + val, 0);
+        const dataWithLabels = labels.map((label, i) => ({
+            label: label,
+            value: rawData[i]
+        }));
 
-        dropdownBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            subMenu.classList.toggle('show');
-            arrow.classList.toggle('rotate');
+        dataWithLabels.sort((a, b) => b.value - a.value); // 내림차순 정렬
+
+        const sortedLabels = dataWithLabels.map(item => item.label);
+        const sortedData = dataWithLabels.map(item => item.value);
+
+        const ctx = document.getElementById(id);
+        const chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: sortedLabels,
+                datasets: [{
+                    label: title,
+                    data: sortedData,
+                    backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#66D9EF','#C70039']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '50%',  // 도넛 중심 공간 비율 조정 (기본 50%)
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title,
+                        font: {
+                            size: 18
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    },
+                    legend: {
+                        display: false
+                    },
+                    datalabels: {
+                        color: '#111',
+                        font: {
+                            size: 10
+                        },
+                        clip: true,
+                        formatter: (value, ctx) => {
+                            const percentage = (value / total) * 100;
+                            if (percentage < 5) return '';
+                            const label = ctx.chart.data.labels[ctx.dataIndex];
+                            return label.length > 6 ? label.slice(0, 6) + '…' : label;
+                        }
+                    }
+                },
+                layout: {
+                    padding: 10
+                }
+            },
+            plugins: [ChartDataLabels]
         });
-    });
+
+        const legendContainer = document.getElementById(id + '-legend');
+        legendContainer.innerHTML = chart.data.labels.map((label, index) => {
+            const color = chart.data.datasets[0].backgroundColor[index % chart.data.datasets[0].backgroundColor.length];
+            return `<li class="d-flex align-items-center mb-1">
+                        <span class="me-2" style="display:inline-block;width:12px;height:12px;background-color:${color};border-radius:50%;"></span>
+                        ${label}
+                    </li>`;
+        }).join('');
+    }
+
+    {% for chart in chart_info %}
+    drawDoughnutChart('{{ chart.0 }}', '{{ chart.1 }}', datasets['{{ chart.2 }}']);
+    {% endfor %}
 </script>
-<!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'genre_trend.apps.GenreTrendConfig',
     'international_boxoffice',
-    'korean_boxoffice'
+    'korean_boxoffice',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
