@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>국가별 영화 장르 분석</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <select id="countrySelect" class="form-select">
+                <option value="">전체 국가</option>
+                {% for country in countries %}
+                <option value="{{ country.code }}">{{ country.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select id="yearSelect" class="form-select">
+                <option value="">전체 연도</option>
+                {% for year in years %}
+                <option value="{{ year }}">{{ year }}년</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button id="analyzeBtn" class="btn btn-primary">분석</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div id="genreChart" class="chart-container" style="position: relative; height:60vh;">
+                <canvas id="donutChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div id="genreTable" class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>장르</th>
+                            <th>비율</th>
+                            <th>영화 수</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('countrySelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const chartCanvas = document.getElementById('donutChart');
+    const genreTable = document.getElementById('genreTable').getElementsByTagName('tbody')[0];
+    let chartInstance = null;
+
+    // Chart.js에 플러그인 등록
+    Chart.register(ChartDataLabels);
+
+    // 페이지 로드 시 자동으로 전체 데이터 분석
+    fetchData();
+
+    analyzeBtn.addEventListener('click', fetchData);
+
+    function fetchData() {
+        const country = countrySelect.value;
+        const year = yearSelect.value;
+
+        fetch(`/international_boxoffice/api/genre-analysis/?country=${country}&year=${year}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
+                if (data.status === 'success' && data.genre_data && data.genre_data.length > 0) {
+                    const genres = data.genre_data.map(item => item.genre);
+                    const percentages = data.genre_data.map(item => item.percentage);
+                    const counts = data.genre_data.map(item => item.count);
+                    updateChart(genres, percentages, counts);
+                    updateTable(data.genre_data);
+                } else {
+                    if (chartInstance) {
+                        chartInstance.destroy();
+                        chartInstance = null;
+                    }
+                    genreTable.innerHTML = '<tr><td colspan="3" class="text-center">데이터가 없습니다.</td></tr>';
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    function updateChart(labels, percentages, counts) {
+        const colors = [
+            "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+            "#f39c12", "#1abc9c", "#2ecc71", "#9b59b6", "#34495e",
+            "#16a085", "#27ae60", "#2980b9", "#8e44ad", "#f1c40f",
+            "#e67e22", "#e74c3c", "#95a5a6", "#d35400"
+        ];
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        const config = {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: percentages,
+                    backgroundColor: colors.slice(0, labels.length),
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const index = context.dataIndex;
+                                return `${labels[index]}: ${percentages[index]}% (${counts[index]}개)`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        },
+                        formatter: function(value, context) {
+                            if (value >= 3.5) {
+                                return [
+                                    labels[context.dataIndex],
+                                    value.toFixed(1) + '%'
+                                ];
+                            }
+                            return null;
+                        },
+                        textAlign: 'center',
+                        display: function(context) {
+                            return context.dataset.data[context.dataIndex] >= 3.5;
+                        }
+                    }
+                }
+            }
+        };
+
+        chartInstance = new Chart(chartCanvas, config);
+    }
+
+    function updateTable(genreData) {
+        genreTable.innerHTML = '';
+        if (genreData && genreData.length > 0) {
+            genreData.forEach(item => {
+                const row = genreTable.insertRow();
+                row.insertCell(0).textContent = item.genre;
+                row.insertCell(1).textContent = `${item.percentage}%`;
+                row.insertCell(2).textContent = item.count;
+            });
+        } else {
+            genreTable.innerHTML = '<tr><td colspan="3" class="text-center">데이터가 없습니다.</td></tr>';
+        }
+    }
+});
+</script>
+{% endblock %} 
