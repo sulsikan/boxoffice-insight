@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -16,6 +17,7 @@
     />
     <!-- Custom CSS -->
     <link href="/static/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
     <style>
         /* Sidebar Styles */
         .sidebar {
@@ -195,7 +197,7 @@
                 <ul class="sub-menu">
                   <li>
                     <a href="{% url 'regional_cumulative' %}" class="{% if 'regional_cumulative' in request.path %}active{% endif %}" style="color: #ccc;">
-                      지역별 누적통계
+                      지역별 누적 매출 점유율
                     </a>
                   </li>
                   <li>
