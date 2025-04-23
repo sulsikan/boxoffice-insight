@@ -5,7 +5,7 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-dark text-white">
           <h4 class="mb-0">영화의 지역별 누적 매출 점유율</h4>
         </div>
         <div class="card-body">
@@ -52,32 +52,32 @@
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header bg-success text-white">
+        <div class="card-header bg-dark text-white">
           <h4 class="mb-0">지역별 상위 흥행 영화 TOP 20</h4>
         </div>
         <div class="card-body">
           <!-- 지역 선택 버튼 -->
           <div class="mt-4 d-flex flex-column align-items-center mb-4" id="regionButtons">
             <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">
-              <button class="btn btn-outline-success btn-lg" data-region="서울시">서울시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="경기도">경기도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="부산시">부산시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="대구시">대구시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="인천시">인천시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="광주시">광주시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="대전시">대전시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="울산시">울산시</button>
-              <button class="btn btn-outline-success btn-lg" data-region="세종시">세종시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="서울시">서울시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="경기도">경기도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="부산시">부산시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="대구시">대구시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="인천시">인천시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="광주시">광주시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="대전시">대전시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="울산시">울산시</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="세종시">세종시</button>
             </div>
             <div class="d-flex flex-wrap gap-2 justify-content-center">
-              <button class="btn btn-outline-success btn-lg" data-region="강원도">강원도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="충청북도">충청북도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="충청남도">충청남도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="전라북도">전라북도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="전라남도">전라남도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="경상북도">경상북도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="경상남도">경상남도</button>
-              <button class="btn btn-outline-success btn-lg" data-region="제주도">제주도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="강원도">강원도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="충청북도">충청북도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="충청남도">충청남도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="전라북도">전라북도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="전라남도">전라남도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="경상북도">경상북도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="경상남도">경상남도</button>
+              <button class="btn btn-outline-dark btn-lg rounded-pill px-4" data-region="제주도">제주도</button>
             </div>
           </div>
           <div id="wordCloud" style="width: 100%; height: 500px;"></div>
@@ -192,18 +192,19 @@
             
             // 새로운 워드클라우드 생성
             WordCloud(wordCloudElement, {
-            list: data.wordcloud_data.map((item) => [item.text, item.value]),
-            gridSize: 18,
-            weightFactor: 0.4,
-            minSize: 10,
-            maxSize: 50,
-            fontFamily: "BobaesumJindo",
-            color: function () {
-              return `hsl(${Math.random() * 360}, 80%, 50%)`;  // 🎨 랜덤 컬러!
-            },
-            backgroundColor: "#fff",
-            rotateRatio: 0,
-          });
+              list: data.wordcloud_data.map(item => [item.text, item.value]),
+              gridSize: 6, 
+              weightFactor: (size) => size * 1.4, 
+              minSize: 10,
+              maxSize: 60,
+              fontFamily: "BobaesumJindo",
+              color: () => `hsl(${Math.random() * 360}, 70%, 40%)`,
+              backgroundColor: "#fff",
+              rotateRatio: 0.6,
+              rotationSteps: 5,
+              minRotation: -Math.PI / 2,
+              maxRotation: Math.PI / 3,
+                });
           }
         })
         .catch((error) => console.error("Error:", error));
@@ -234,17 +235,18 @@
                 
                 // 새로운 워드클라우드 생성
                 WordCloud(wordCloudElement, {
-                  list: data.wordcloud_data.map((item) => [item.text, item.value]),
-                  gridSize: 18,
-                  weightFactor: 0.4,
+                  list: data.wordcloud_data.map(item => [item.text, item.value]),
+                  gridSize: 6, 
+                  weightFactor: (size) => size * 1.4, 
                   minSize: 10,
-                  maxSize: 30,
+                  maxSize: 60,
                   fontFamily: "BobaesumJindo",
-                  color: function () {
-                    return `hsl(${Math.random() * 360}, 60%, 50%)`;
-                  },
+                  color: () => `hsl(${Math.random() * 360}, 70%, 40%)`,
                   backgroundColor: "#fff",
-                  rotateRatio: 0,
+                  rotateRatio: 0.6,
+                  rotationSteps: 5,
+                  minRotation: -Math.PI / 2,
+                  maxRotation: Math.PI / 3,
                 });
               }
             })
