@@ -144,38 +144,7 @@
             <span class="logo_name">BoxOffice Insight</span>
         </div>
         <ul class="nav-links">
-            <li>
-                <a href="{% url 'korean_boxoffice:monthly_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
-                    <i class='bx bx-grid-alt'></i>
-                    <span class="link_name">대시보드</span>
-                </a>
-            </li>
-            <li>
-                <div class="dropdown-btn">
-                    <a href="#" class="{% if 'international' in request.path %}active{% endif %}">
-                        <i class='bx bx-bar-chart-alt-2'></i>
-                        <span class="link_name">국가 및 대륙별 분석</span>
-                        <i class='bx bx-chevron-down arrow'></i>
-                    </a>
-                </div>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="{% url 'international_boxoffice_visualization' %}" class="{% if 'international-visualization' in request.path %}active{% endif %}">
-                            국가별 매출 변화
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'movie_international_visualization' %}" class="{% if 'movie-international-visualization' in request.path %}active{% endif %}">
-                            영화별 국가 매출
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'genre_analysis' %}" class="{% if 'genre-analysis' in request.path %}active{% endif %}">
-                            국가별 장르 분석
-                        </a>
-                    </li>
-                </ul>
-            </li>
+            
             <li>
                 <div class="dropdown-btn">
 
@@ -187,17 +156,17 @@
                 </div>
                 <ul class="sub-menu">
                     <li>
-                        <a href="{% url 'korean_boxoffice:daily_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
+                        <a href="{% url 'korean_boxoffice:daily_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}" style="color: #ccc">
                             일간 박스 오피스
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'korean_boxoffice:monthly_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
+                        <a href="{% url 'korean_boxoffice:monthly_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}" style="color: #ccc">
                             월간 박스 오피스
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'korean_boxoffice:annual_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
+                        <a href="{% url 'korean_boxoffice:annual_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}" style="color: #ccc">
                             연간 박스 오피스
                         </a>
                     </li>
@@ -224,12 +193,6 @@
                     </li>
                 </ul>
             </li>
-            {% comment %} <li>
-                <a href="{% url 'movie_performance_summary' %}" class="{% if 'movie_performance_summary' in request.path %}active{% endif %}">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">영화별 성과 분석</span>
-                </a>
-            </li> {% endcomment %}
             <li>
                 <div class="dropdown-btn">
                   <a href="#" class="{% if 'genre' in request.path %}active{% endif %}">
@@ -267,15 +230,39 @@
                   </li>
                   <li>
                     <a href="{% url 'regional_boxoffice' %}" class="{% if 'regional_boxoffice' in request.path %}active{% endif %}" style="color: #ccc;">
-<<<<<<< HEAD
-                    지역별 한국/외국영화 분석
-=======
                       지역별 한국/외국 영화분석
->>>>>>> yeanjun
                     </a>
                   </li>
                 </ul>
               </li>
+              <li>
+                <div class="dropdown-btn">
+                    <a href="#" class="{% if 'international' in request.path %}active{% endif %}">
+                        <i class='bx bx-bar-chart-alt-2'></i>
+                        <span class="link_name">국가 및 대륙별 분석</span>
+                        <i class='bx bx-chevron-down arrow'></i>
+                    </a>
+                </div>
+                <ul class="sub-menu">
+                    <li>
+
+                            <a href="{% url 'international_boxoffice_visualization' %}" class="{% if 'international-visualization' in request.path %}active{% endif %}" style="color: #ccc";>
+                                국가별 매출 변화
+                            </a>
+
+                    </li>
+                    <li>
+                        <a href="{% url 'movie_international_visualization' %}" class="{% if 'movie-international-visualization' in request.path %}active{% endif %}" style="color: #ccc";>
+                            영화별 국가 매출
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'genre_analysis' %}" class="{% if 'genre-analysis' in request.path %}active{% endif %} " style="color: #ccc">
+                            국가별 장르 분석
+                        </a>
+                    </li>
+                </ul>
+            </li>
           </ul>
         </li>
       </ul>

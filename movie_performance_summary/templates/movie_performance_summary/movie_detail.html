@@ -107,7 +107,7 @@
         options: {
             responsive: true,
             plugins: {
-                tooltip: {
+                tooltip: { // 마우스를 차트의 데이터 포인트 위에 올렸을 때 나타나는 툴팁의 내용 설정
                     callbacks: {
                         label: function(context) {
                             if (context.dataset.label === '누적 관객 수' || context.dataset.label === '일일 관객 수') {
