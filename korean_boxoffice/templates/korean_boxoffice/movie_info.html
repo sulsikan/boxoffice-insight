@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>{{ movie_info.movie_name }}</h1>
+    {% if movie_info.is_now_showing %}
+    	상영중
+    {% endif %}
+    <div>
+        <img src="{{movie_info.movie_img  }}" alt="no image">
+        <dl>
+            <dt>개봉일</dt>
+            <dl>{{ release_date.year }}년 {{ release_date.month }}월 {{ release_date.day }}일</dl>
+
+            <dt>장르</dt>
+            <dl>{{ movie_info.genre }}</dl>
+
+            <dt>국가</dt>
+            <dl>{{ movie_info.nation }}</dl>
+        </dl>
+
+    </div>
+{% endblock %}

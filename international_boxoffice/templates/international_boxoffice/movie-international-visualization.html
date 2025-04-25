@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2>영화별 국가 매출 분석</h2>
+    
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">필터</h5>
+                    <form id="filterForm">
+                        <div class="mb-3">
+                            <label for="movieTitle" class="form-label">영화 제목</label>
+                            <select class="form-select" id="movieTitle" name="movieTitle">
+                                <option value="">영화를 선택하세요</option>
+                                {% for movie in movies %}
+                                <option value="{{ movie }}">{{ movie }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="year" class="form-label">연도</label>
+                            <select class="form-select" id="year" name="year">
+                                <option value="">전체</option>
+                                {% for year in years %}
+                                <option value="{{ year }}">{{ year }}년</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="period" class="form-label">기간</label>
+                            <select class="form-select" id="period" name="period">
+                                <option value="year">연간</option>
+                                <option value="quarter">분기별</option>
+                                <option value="month">월별</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">조회</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <div id="chart" style="width: 100%; height: 600px; min-height: 500px;"></div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">상세 데이터</h5>
+                    <div class="table-responsive">
+                        <table class="table" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>국가</th>
+                                    <th>기간</th>
+                                    <th>매출액 (USD)</th>
+                                    <th>원화 매출액</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 필터 폼 제출 처리
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const params = new URLSearchParams({
+            movie_title: document.getElementById('movieTitle').value,
+            year: document.getElementById('year').value,
+            period: document.getElementById('period').value
+        });
+
+        fetch(`/international_boxoffice/api/movie-revenue/?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    updateChart(data);
+                    updateTable(data);
+                }
+            })
+            .catch(error => console.error('Error loading data:', error));
+    });
+
+    function updateChart(data) {
+        if (!data.chart_data || data.chart_data.length === 0) {
+            console.warn('No chart data available');
+            return;
+        }
+
+        const traces = [];
+        const colors = {
+            '미국': '#2E86C1',  // 파란색
+            '영국': '#E74C3C',  // 빨간색
+            '독일': '#F1C40F',  // 노란색
+            '일본': '#2ECC71'   // 초록색
+        };
+
+        // 국가별 트레이스 생성
+        Object.entries(data.chart_data).forEach(([country, values]) => {
+            traces.push({
+                x: values.periods,
+                y: values.revenues,
+                name: country,
+                type: 'bar',
+                marker: {
+                    color: colors[country] || '#95A5A6'
+                }
+            });
+        });
+
+        const layout = {
+            title: '국가별 영화 매출액 비교',
+            barmode: 'group',
+            xaxis: {
+                tickangle: 0,
+                tickfont: {
+                    size: 16
+                },
+                ticktext: traces[0].x.map(period => {
+                    const [year, quarter] = period.split(' ');
+                    return `${year}<br>${quarter || ''}`;
+                }),
+                tickvals: traces[0].x,
+                tickmode: 'array'
+            },
+            yaxis: {
+                title: '매출액 (USD)',
+                tickformat: ',.0f',
+                tickprefix: '$',
+                titlefont: { size: 14 },
+                automargin: true,
+                separatethousands: true,
+                tickfont: {
+                    size: 12
+                }
+            },
+            showlegend: true,
+            legend: {
+                orientation: 'h',
+                yanchor: 'bottom',
+                y: 1.02,
+                xanchor: 'right',
+                x: 1,
+                font: {
+                    size: 12
+                }
+            },
+            margin: {
+                l: 100,
+                r: 50,
+                t: 80,
+                b: 100
+            },
+            autosize: true,
+            font: {
+                family: 'Arial, sans-serif'
+            }
+        };
+
+        Plotly.newPlot('chart', traces, layout);
+    }
+
+    function updateTable(data) {
+        if (!data.table_data || data.table_data.length === 0) {
+            console.warn('No table data available');
+            return;
+        }
+
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+        
+        data.table_data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.country}</td>
+                <td>${row.period}</td>
+                <td>$${row.revenue_usd.toLocaleString()}</td>
+                <td>${row.revenue_local.toLocaleString()} ${row.currency}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+});
+</script>
+{% endblock %} 
