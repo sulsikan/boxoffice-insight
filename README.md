@@ -49,14 +49,12 @@ python manage.py runserver
 
 ### Frontend
 
-<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
-<img src="https://img.shields.io/badge/plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white">
+<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"><img src="https://img.shields.io/badge/plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white">
 <img src="https://img.shields.io/badge/chartjs-FF6384?style=for-the-badge&logo=chartjs&logoColor=white">
 
 ### Backend
 
-<img src="https://img.shields.io/badge/django-092E20?style=for-the-badge&logo=django&logoColor=white">
-<img src="https://img.shields.io/badge/sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white">
+<img src="https://img.shields.io/badge/django-092E20?style=for-the-badge&logo=django&logoColor=white"><img src="https://img.shields.io/badge/sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white">
 <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
 <img src="https://img.shields.io/badge/selenium-43B02A?style=for-the-badge&logo=selenium&logoColor=white">
 <img src="https://img.shields.io/badge/beautifulsoup-003B57?style=for-the-badge&logo=beautifulsoup&logoColor=white">
@@ -65,8 +63,7 @@ python manage.py runserver
 
 ### Cooperation
 
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
-<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"><img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 <img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
 
 
@@ -74,27 +71,10 @@ python manage.py runserver
 
 |  | 설명 |
 | --- | --- |
-| 🎯 **박스오피스 분석** | **일별/월간/연간** 박스오피스 데이터를 기반으로 **매출, 관객 수, 스크린 수** 등을 **Top 10 기준 파이차트**로 시각화 |
 | 📊 **누적 흥행 추이 분석** | 영화별 개봉 이후 10일 간의 **누적 관객 수, 매출액, 스크린 수 변화**를 선형 그래프로 시각화 + **동기간 경쟁작과 비교 분석** |
 | 🗺️ **지역별 관객 분석** | 영화별로 지역별 **최대 상영 수, 누적 관객 수, 매출액** 시각화 + **한국/외국 영화 지역별 비율 비교** |
 | 🌎 **국가 및 대륙별 비교 분석** | 특정 시점(연도/분기/월) 기준 **국가별 영화 매출 순위, 성장/감소 추이, 장르 비중**을 분석하고 **Line Chart**로 시각화 |
-| 🎭 **장르 트렌드 분석** | 연도별/장르별로 **영화 수 및 누적 관객 수 변화**를 시각화하여 **장르별 흥행 트렌드와 점유율 파악** |
 
-## 한국 박스오피스
-
-### 1. 일간 박스오피스
-
-캘린더에서 조회를 원하는 날을 선택해 Top 10의 영화를 보여주며, 그 영화의 일간 매출액, 매출액 점유율, 관객수, 스크린수, 상영수 의 성적을 보여줍니다. 점유율 퍼센트는 파이차트로 표시하며 5프로 초과한 점유율은 알아보기 쉽게 표시하였습니다. TOP 10 나머지 영화들은 기타영화로 표현해서 파이차트에 표시했습니다.
-
-영화제목을 선택하면 해당 영화 정보를 볼수 있습니다. 영화의 상영중 여부, 영화 포스터 이미지, 개봉일, 장르, 국가 정보가 이 페이지 에서 표시됩니다.
-
-### 2. 월간 박스 오피스
-
-원하는 달을 선택하면 해당 월의 Top 10의 영화를 보여주며, 일간 박스오피스에서와 같이 그 영화의 일간 매출액, 매출액 점유율, 관객수, 스크린수, 상영수 의 성적을 보여줍니다. 시각화도 일간 박스오피스와 같이 보여줍니다. 영화제목을 클릭하면 마찬가지로 일간 영화정보를 보여줍니다.
-
-### 3. 연간 박스 오피스
-
-원하는 년을 선택하면 해당 년도의 Top 10의 영화를 보여주며, 일간 박스오피스에서와 같이 그 영화의 일간 매출액, 매출액 점유율, 관객수, 스크린수, 상영수 의 성적을 보여줍니다. 시각화도 일간 박스오피스와 같이 보여줍니다. 영화제목을 클릭하면 마찬가지로 일간 영화정보를 보여줍니다.
 
 ### **영화별 성과 데이터 시각화**
 
@@ -104,21 +84,33 @@ python manage.py runserver
         - 성과 분석에 유용한 주요 지표를 시각화함으로써 흥행 성적을 직관적으로 이해할 수 있도록 하였습니다.
     - 기능
         - 영화 목록 제공 : 기본 페이지에서는 국내 박스오피스 상위 200편의 영화 목록을 확인할 수 있습니다.
+          ![스크린샷 2025-04-24 오전 1 42 21](https://github.com/user-attachments/assets/3ef90220-9597-4a7f-84a7-02039ed9b552)
+
         - 검색 기능 : 관심 있는 영화를 검색하여 빠르게 찾을 수 있도록 검색 기능을 제공합니다.
+          ![image (1)](https://github.com/user-attachments/assets/733fec39-ae33-4aab-a497-c3ff54274e9a)
+
+
         - 성과 지표 시각화 : 여기서 개봉 후 10일 동안 `관객 수`와 `스크린 수`, `매출액` 지표를 가져와 어떤 그래프를 띄우는지 한 눈에 볼 수 있습니다.
+          ![image](https://github.com/user-attachments/assets/f01cdc62-3d57-4fd8-bb3b-adcec9e21965)
+
             - 좌측 그래프 ****: `스크린 수`와 `관객 수`를 함께 나타내어, 개봉 초반 마케팅 투자(스크린 수)에 비해 실제 관객 유입이 어떻게 이루어졌는지를 시각적으로 확인할 수 있습니다.
             - 우측 그래프 : `일일 매출액`과 `누적 매출액`을 함께 시각화하여, 영화의 매출 성과가 시간이 지남에 따라 어떻게 변화했는지(증감 추이)를 파악할 수 있습니다.
+              
 2. **같은 시기 다른 영화들과의 비교**
     - 개요
         - 국내 박스오피스 TOP 200 영화 중 상영된 시기와 같은 연도에 개봉한 다른 영화들의 데이터를 불러와 원형 그래프로 나타냅니다.
         - 이를 통해 해당 영화가 어떤 작품들과 경쟁했는지, 또 그 경쟁 속에서 어느 정도의 흥행 성과를 거두었는지를 직관적으로 비교해볼 수 있습니다.
     - 기능
         - 연도별 관객수 파이 차트 제공 : 기본페이지에는 2005년부터 2024년까지의 연도별 `관객수` 파이차트가 있습니다.
+          ![image (3)](https://github.com/user-attachments/assets/f536acc0-999c-43d5-9ae7-a333ba4757ba)
+
         - 이를 통해 연도별 영화 산업의 흐름을 살펴보고, 특정 연도의 흥행 강세 및 약세를 한눈에 확인할 수 있습니다.
             
             예를 들어 코로나19가 유행하던 2020년과 2021년의 파이차트를 살펴보면, 다른 연도에 비해 개봉 영화의 수와 총 관객 수가 현저히 낮았음을 시각적으로 확인할 수 있습니다.
             
         - 검색기능 : 검색해서 원하는 데이터의 파이차트를 확인할 수 있습니다. 찾고자 하는 영화의 흥행 성적은 어느 정도였는지 확인해보세요!
+          ![image (4)](https://github.com/user-attachments/assets/00c40723-d9f2-4c2f-90a8-4b063d1ee693)
+
 
 ## 장르별 분석
 
@@ -126,21 +118,25 @@ python manage.py runserver
 
 - **분석 내용**:
     
-    장르를 검색하고 해당 영화의 누적 매출과 관객 수, 스크린 수, 개봉편수를 보여주며 각 데이터를 파이차트로 보여줌
+    장르를 검색하고 해당 영화의 누적 매출과 관객 수, 스크린 수, 개봉편수를 보여주며 각 데이터를 파이차트로 보여줍니다.
+  ![image (5)](https://github.com/user-attachments/assets/99c474c7-08e7-4a48-b5e7-67e26dc57fd0)
+
     
 - **분석 목적**:
     
-    장르별로 매출액, 관객수 , 스크린 수, 개봉 편수를 통해 어떤 장르의 영화가 매출액이 좋으며 관객 수와 개봉 편수 파악하는데 사용
+    장르별로 매출액, 관객수 , 스크린 수, 개봉 편수를 통해 어떤 장르의 영화가 매출액이 좋으며 관객 수와 개봉 편수 파악하는데 사용할 수 있습니다.
     
 - **파악할 수 있는 것**:
-    - 매출과 관객 수가 비례하는지 확인
-    - 배급사/극장주 입장에서 어떤 장르가 수익이 높은지 확인
+    - 매출과 관객 수가 비례하는지 확인할 수 있습니다.
+    - 배급사/극장주 입장에서 어떤 장르가 수익이 높은지 확인할 수 있습니다.
 
 ### 2. 연도별 누적 통계
 
 - **분석 내용**:
     
     연도를 검색하여 장르별 누적 판매액, 누적 관객수, 스크린 수, 개봉 편수를 보여주며 각 항목의 Top 5를 그래프로 보여주며 전체 데이터를 테이블로 보여주어 데이터를 보여줌
+  ![image (6)](https://github.com/user-attachments/assets/5c94a9d9-99d1-4d57-9c16-2e93856ea179)
+
     
 - **분석 목적**:
     
@@ -149,25 +145,10 @@ python manage.py runserver
 - **파악할 수 있는 것**:
     - 각 연도의 장르 트렌드를 확인
 
-## 국가/대륙별 개봉 현황 및 매출 분석
-
-### 1. 국가별 매출 변화
-
-막대 그래프를 통해 연도별, 월별 매출액의 변화를 볼 수 있습니다.
-
-시작일과 종료일, 국가를 설정해서 해당 기간동안 해당 국가의 매출액 변화 즉 영화 시장의 증감소를 볼 수 있음
-
-### 2. 영화별 국가 매출 분석
-
-특정 영화를 드롭다운 방식으로 선택하면
-
-그 영화의 해당 연도 혹은 전체 연도 매출액을 막대그래프로 표시해줌
-
-기간은 분기, 월, 연 별로 설정할 수 있음
-
-해당 영화가 얼마만큼의 매출액을 특정 기간별, 국가별로 거둬내었는지 한눈에 확인 할 수 있음
-
 ### 1. **영화의 지역별 누적 매출 점유율 (파이차트 + 테이블)**
+
+![image (9)](https://github.com/user-attachments/assets/d2b76dcf-7721-47c1-977e-ebeb5afad73b)
+
 
 - **분석 내용**:
     
@@ -192,6 +173,9 @@ python manage.py runserver
 
 ### 2. **선택 지역의 월별 한국/외국 영화 점유율 추이 (라인차트)**
 
+![image (10)](https://github.com/user-attachments/assets/467e15ae-e581-492a-a1f4-783abb30bf95)
+
+
 - **분석 내용**:
     
     특정 지역(예: 부산시)에 대해 1월부터 12월까지 월별로 한국 영화 vs 외국 영화 점유율 변화를 보여주는 그래프.
@@ -212,6 +196,9 @@ python manage.py runserver
 ---
 
 ### 3. **지역별 한국/외국 영화 매출액 비교 (막대 그래프)**
+
+![image (11)](https://github.com/user-attachments/assets/7b2f6498-7434-4c13-9dfe-960b57c0a718)
+
 
 - **분석 내용**:
     
@@ -234,6 +221,9 @@ python manage.py runserver
 ---
 
 ### 4. **지역별 상위 흥행 영화 TOP 20 (워드클라우드)**
+
+![스크린샷 2025-04-24 005514](https://github.com/user-attachments/assets/3783c012-57f5-4030-b39d-2fda61e2f382)
+
 
 - **분석 내용**:
     
