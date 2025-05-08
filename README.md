@@ -3,7 +3,7 @@
 BoxOffice Insight는 영화 박스오피스 정보를 제공하는 웹 애플리케이션입니다.
 
 ## 기술 스택
-- Python 3.x
+- Python 3.11
 - Django 5.2
 - SQLite (개발용 DB)
 
