@@ -24,14 +24,14 @@ source venv/bin/activate  # Mac/Linux
 
 ```
 
-1. 의존성 패키지 설치
+2. 의존성 패키지 설치
 
 ```bash
 pip install -r requirements.txt
 
 ```
 
-1. 데이터베이스 마이그레이션
+3. 데이터베이스 마이그레이션
 
 ```bash
 python manage.py makemigrations
@@ -42,7 +42,22 @@ python manage.py migrate
 
 ```
 
-1. 개발 서버 실행
+4. 데이터 크롤링
+
+```bash
+cd utils
+
+```
+```bash
+python crawl_10days.py
+
+```
+```bash
+python crawl_info.py
+
+```
+
+5. 개발 서버 실행
 
 ```bash
 python manage.py runserver
