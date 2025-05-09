@@ -13,7 +13,7 @@
 
 ## 📌 시작 가이드
 
-- Python 3.11
+- Python 3.x
 - Django 5.2
 - SQLite (개발용 DB)
 1. 가상환경 생성 및 활성화
@@ -33,6 +33,10 @@ pip install -r requirements.txt
 
 1. 데이터베이스 마이그레이션
 
+```bash
+python manage.py makemigrations
+
+```
 ```bash
 python manage.py migrate
 
