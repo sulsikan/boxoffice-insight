@@ -101,14 +101,19 @@ python manage.py runserver
         - 성과 분석에 유용한 주요 지표를 시각화함으로써 흥행 성적을 직관적으로 이해할 수 있도록 하였습니다.
     - 기능
         - 영화 목록 제공 : 기본 페이지에서는 국내 박스오피스 상위 200편의 영화 목록을 확인할 수 있습니다.
-          ![스크린샷 2025-04-24 오전 1 42 21](https://github.com/user-attachments/assets/3ef90220-9597-4a7f-84a7-02039ed9b552)
+        - 
+          <img width="1452" alt="image" src="https://github.com/user-attachments/assets/5f0c9f02-17dd-4b87-bc7f-40eb87e16e62" />
+
 
         - 검색 기능 : 관심 있는 영화를 검색하여 빠르게 찾을 수 있도록 검색 기능을 제공합니다.
-          ![image (1)](https://github.com/user-attachments/assets/733fec39-ae33-4aab-a497-c3ff54274e9a)
+        - 
+          <img width="1464" alt="image" src="https://github.com/user-attachments/assets/c921d741-3c11-45f7-ad9f-196106a0b93c" />
 
 
         - 성과 지표 시각화 : 여기서 개봉 후 10일 동안 `관객 수`와 `스크린 수`, `매출액` 지표를 가져와 어떤 그래프를 띄우는지 한 눈에 볼 수 있습니다.
-          ![image](https://github.com/user-attachments/assets/f01cdc62-3d57-4fd8-bb3b-adcec9e21965)
+        - 
+          <img width="1464" alt="image" src="https://github.com/user-attachments/assets/3e47a812-cf2c-4ae8-a459-3c65fbfe2c81" />
+
 
             - 좌측 그래프 ****: `스크린 수`와 `관객 수`를 함께 나타내어, 개봉 초반 마케팅 투자(스크린 수)에 비해 실제 관객 유입이 어떻게 이루어졌는지를 시각적으로 확인할 수 있습니다.
             - 우측 그래프 : `일일 매출액`과 `누적 매출액`을 함께 시각화하여, 영화의 매출 성과가 시간이 지남에 따라 어떻게 변화했는지(증감 추이)를 파악할 수 있습니다.
@@ -119,14 +124,18 @@ python manage.py runserver
         - 이를 통해 해당 영화가 어떤 작품들과 경쟁했는지, 또 그 경쟁 속에서 어느 정도의 흥행 성과를 거두었는지를 직관적으로 비교해볼 수 있습니다.
     - 기능
         - 연도별 관객수 파이 차트 제공 : 기본페이지에는 2005년부터 2024년까지의 연도별 `관객수` 파이차트가 있습니다.
-          ![image (3)](https://github.com/user-attachments/assets/f536acc0-999c-43d5-9ae7-a333ba4757ba)
+        - 
+          <img width="1456" alt="image" src="https://github.com/user-attachments/assets/ce601415-43ad-441b-aefa-f6270627c063" />
+
 
         - 이를 통해 연도별 영화 산업의 흐름을 살펴보고, 특정 연도의 흥행 강세 및 약세를 한눈에 확인할 수 있습니다.
             
             예를 들어 코로나19가 유행하던 2020년과 2021년의 파이차트를 살펴보면, 다른 연도에 비해 개봉 영화의 수와 총 관객 수가 현저히 낮았음을 시각적으로 확인할 수 있습니다.
             
         - 검색기능 : 검색해서 원하는 데이터의 파이차트를 확인할 수 있습니다. 찾고자 하는 영화의 흥행 성적은 어느 정도였는지 확인해보세요!
-          ![image (4)](https://github.com/user-attachments/assets/00c40723-d9f2-4c2f-90a8-4b063d1ee693)
+        - 
+          <img width="1449" alt="image" src="https://github.com/user-attachments/assets/7b6b5f03-c059-43c2-8474-ed86336add9d" />
+
 
 
 ### 장르별 분석
