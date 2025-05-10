@@ -21,11 +21,7 @@ phases:
     commands:
       - echo Build completed.
 
-  post_build:
-    commands:
-      - echo Creating deployment zip...
-      - zip -r django-app.zip . -x "*.git*" "*.venv*" "__pycache__/*" "*.pyc"
-
 artifacts:
   files:
-    - django-app.zip
+    - '**/*'      # 전체 파일을 다 포함시킴
+  discard-paths: no  # 디렉토리 구조를 유지함
