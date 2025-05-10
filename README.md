@@ -45,13 +45,6 @@ python manage.py runserver
 
 ```
 
-## 📌 인프라 설계
-- Public 서브넷(Bastion Host)과 Private 서브넷 (Beanstalk EC2 단일 인스턴스)를 분리하여 외부로부터의 직접적인 접근을 차단하고, 보안을 강화시켰습니다.
-- AWS CodePipeline을 사용하여 애플리케이션의 배포 프로세스를 자동화합니다. 이를 통해 코드 변경 시 자동으로 빌드, 배포가 이루어지도록 설정하여 개발 효율성을 높였습니다.
-
-![image](https://github.com/user-attachments/assets/36197b3a-3f33-4954-9586-aefff93b07d4)
-
-
 ## 🛠️ 기술 스택
 
 ### Frontend
