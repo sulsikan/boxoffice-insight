@@ -10,3 +10,4 @@ webdriver-manager>=4.0.2
 mysqlclient>=2.1.0
 matplotlib
 seaborn
+gunicorn
