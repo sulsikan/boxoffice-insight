@@ -64,6 +64,16 @@
         }
         
         .sidebar .nav-links li a {
+            background-color: #11101d; /* 기본 네비게이션 바 색상 */
+            color: #ccc; /* 기본 텍스트 색상 */
+        }
+
+        .sidebar .nav-links li a.active {
+            background-color: #1d1b31; /* 활성화된 메뉴의 배경색 */
+            color: #fff; /* 활성화된 텍스트 색상 */
+        }
+        
+        .sidebar .nav-links li a {
             height: 50px;
             display: flex;
             align-items: center;
@@ -76,7 +86,7 @@
         .sidebar .nav-links li a.active {
             background: #1d1b31;
         }
-        
+
         .sidebar .nav-links li i {
             min-width: 30px;
             text-align: center;
@@ -147,39 +157,13 @@
             
             <li>
                 <div class="dropdown-btn">
-
-                <a href="{% url 'korean_boxoffice:index' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}">
-                    <i class='bx bx-bar-chart-alt-2'></i>
-                    <span class="link_name">한국 박스오피스</span>
-                    <i class='bx bx-chevron-down arrow'></i>
-                </a>
-                </div>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="{% url 'korean_boxoffice:daily_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}" style="color: #ccc">
-                            일간 박스 오피스
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'korean_boxoffice:monthly_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}" style="color: #ccc">
-                            월간 박스 오피스
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'korean_boxoffice:annual_boxoffice' %}" class="{% if 'korean_boxoffice' in request.path %}active{% endif %}" style="color: #ccc">
-                            연간 박스 오피스
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <div class="dropdown-btn">
                     <a href="#" class="{% if 'movie_performance' in request.path %}active{% endif %}">
                         <i class='bx bx-bar-chart-alt-2'></i>
                         <span class="link_name">영화 흥행 요약</span>
                         <i class='bx bx-chevron-down arrow'></i>
                     </a>
                 </div>
+                
                 <ul class="sub-menu">
                     <li>
                         <a href="{% url 'movie_performance_summary' %}" class="{% if 'movie_performance_summary' in request.path %}active{% endif %}">
@@ -193,7 +177,7 @@
                     </li>
                 </ul>
             </li>
-            <li>
+            {% comment %} <li>
                 <div class="dropdown-btn">
                   <a href="#" class="{% if 'genre' in request.path %}active{% endif %}">
                     <i class="bx bx-bar-chart-alt-2"></i>
@@ -234,40 +218,16 @@
                     </a>
                   </li>
                 </ul>
-              </li>
-              <li>
-                <div class="dropdown-btn">
-                    <a href="#" class="{% if 'international' in request.path %}active{% endif %}">
-                        <i class='bx bx-bar-chart-alt-2'></i>
-                        <span class="link_name">국가 및 대륙별 분석</span>
-                        <i class='bx bx-chevron-down arrow'></i>
-                    </a>
-                </div>
-                <ul class="sub-menu">
-                    <li>
+              </li> {% endcomment %}
+            
 
-                            <a href="{% url 'international_boxoffice_visualization' %}" class="{% if 'international-visualization' in request.path %}active{% endif %}" style="color: #ccc";>
-                                국가별 매출 변화
-                            </a>
-
-                    </li>
-                    <li>
-                        <a href="{% url 'movie_international_visualization' %}" class="{% if 'movie-international-visualization' in request.path %}active{% endif %}" style="color: #ccc";>
-                            영화별 국가 매출
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'genre_analysis' %}" class="{% if 'genre-analysis' in request.path %}active{% endif %} " style="color: #ccc">
-                            국가별 장르 분석
-                        </a>
-                    </li>
-                </ul>
-            </li>
+              
           </ul>
         </li>
       </ul>
     </div>
 
+    
     <!-- Main Content -->
     <div class="main-content">{% block content %}{% endblock %}</div>
 

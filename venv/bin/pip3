@@ -1,4 +1,4 @@
-#!/Users/daehanchoi/workspace/boxoffice-insight/venv/bin/python3
+#!/Users/sulsikan/Documents/취업/포트폴리오/boxoffice-insight/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
