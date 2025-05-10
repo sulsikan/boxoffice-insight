@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo Installing dependencies...
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
+
+  pre_build:
+    commands:
+      - echo Applying migrations...
+      - python manage.py makemigrations
+      - python manage.py migrate
+      - echo Collecting static files...
+      - python manage.py collectstatic --noinput
+
+  build:
+    commands:
+      - echo Build completed.
+
+  post_build:
+    commands:
+      - echo Creating deployment zip...
+      - zip -r django-app.zip . -x "*.git*" "*.venv*" "__pycache__/*" "*.pyc"
+
+artifacts:
+  files:
+    - django-app.zip
