@@ -80,24 +80,24 @@ WSGI_APPLICATION = 'boxoffice.wsgi.application'
 
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'mydb',
-        'NAME': os.environ.get('DB_NAME',''),
-        # 'USER': 'myuser',
-        'USER': os.environ.get('DB_USER',''),
-        # 'PASSWORD': 'mypassword',
-        'PASSWORD': os.environ.get('DB_PASSWORD',''),
-        # 'HOST': 'localhost',
-        'HOST': os.environ.get('DB_HOST',''),
-        # 'PORT': '3306',
-        'PORT': os.environ.get('DB_PORT', '3306'),
-        
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     # 'NAME': 'mydb',
+    #     'NAME': os.environ.get('DB_NAME',''),
+    #     # 'USER': 'myuser',
+    #     'USER': os.environ.get('DB_USER',''),
+    #     # 'PASSWORD': 'mypassword',
+    #     'PASSWORD': os.environ.get('DB_PASSWORD',''),
+    #     # 'HOST': 'localhost',
+    #     'HOST': os.environ.get('DB_HOST',''),
+    #     # 'PORT': '3306',
+    #     'PORT': os.environ.get('DB_PORT', '3306'),
+
+    # }
 }
 
 
