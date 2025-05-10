@@ -6,8 +6,9 @@
 
 > 본 프로젝트는 한국 영화 시장에 대한 공공 통계 데이터를 기반으로 다양한 관점에서 분석하고 시각화하여, 사용자가 영화 산업의 흐름과 트렌드를 직관적으로 이해할 수 있도록 도와주는 데이터 기반 영화 분석 웹 애플리케이션입니다.
 > 
+> 제가 참여했던 프로그래머스 데이터 엔지니어링 데브코스 1차 팀 프로젝트의 기능을 축소하고, AWS 인프라 배포를 진행한 축소판 프로젝트입니다.
 
-**진행 기간**: `2025.04.18 ~ 2025.04.23`
+**진행 기간**: `2025.05.08 ~ 2025.05.11`
 
 <!-- ## 배포 주소 -->
 
@@ -76,7 +77,6 @@ python manage.py runserver
 <img src="https://img.shields.io/badge/django-092E20?style=for-the-badge&logo=django&logoColor=white"><img src="https://img.shields.io/badge/sqlite-003B57?style=for-the-badge&logo=sqlite&logoColor=white">
 <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
 <img src="https://img.shields.io/badge/selenium-43B02A?style=for-the-badge&logo=selenium&logoColor=white">
-<img src="https://img.shields.io/badge/beautifulsoup-003B57?style=for-the-badge&logo=beautifulsoup&logoColor=white">
 
 <!-- ### Infra -->
 
